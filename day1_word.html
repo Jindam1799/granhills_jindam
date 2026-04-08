@@ -109,13 +109,27 @@
     <audio id="wrong-sound" src="wrong.mp3" preload="auto"></audio>
 
     <style>
-      /* 클릭 금지 상태일 때 버튼 효과 제거 */
-      .choices-area.disabled {
-        pointer-events: none; /* 클릭 차단 */
-      }
-      .choices-area.disabled .choice-btn:hover {
-        transform: none !important; /* 커지는 효과 제거 */
+      /* [수정] 모든 버튼의 호버(마우스 올리기) 효과를 완전히 제거합니다. */
+      .choice-btn:hover {
+        transform: none !important;
         box-shadow: none !important;
+        background-color: white !important; /* 기본 배경 유지 */
+        color: var(--text-main) !important; /* 기본 글자색 유지 */
+      }
+
+      /* 클릭했을 때나 정답/오답일 때만 색상이 변하도록 설정 */
+      .choice-btn.correct {
+        background-color: var(--correct) !important;
+        color: white !important;
+      }
+      .choice-btn.wrong {
+        background-color: var(--wrong) !important;
+        color: white !important;
+      }
+
+      /* 클릭 금지 상태일 때 터치 차단 */
+      .choices-area.disabled {
+        pointer-events: none;
       }
     </style>
 
