@@ -406,45 +406,47 @@ function loadQuestion() {
 function selectChunk(chunk, cardElement) {
   if (cardElement.classList.contains('used')) return;
 
-  // 1. 아래쪽 카드 비활성화
+  // 1. 아래쪽 대기 카드 비활성화
   cardElement.classList.add('used');
   selectedChunks.push(chunk.h);
 
   const display = document.getElementById('sentence-display');
   const selectedTag = document.createElement('div');
   selectedTag.className = 'selected-card';
-  // 클릭이 가능하다는 시각적 힌트 (손가락 모양)
+
+  // ★ 데스크탑 사용자를 위한 마우스 커서 설정
   selectedTag.style.cursor = 'pointer';
 
-  // 테이블 위 카드 구성 (한자 크게, 병음 작게)
+  // 카드 내용 삽입 (한자 크게, 병음 작게)
   selectedTag.innerHTML = `<div class="hz-text">${chunk.h}</div><div class="py-text">${chunk.p}</div>`;
 
-  // ★ [핵심 기능] 테이블에 올라간 카드를 클릭하면 제자리로! ★
-  selectedTag.onclick = (e) => {
-    // 이벤트 전파 방지 (혹시 모를 버그 방지)
-    e.stopPropagation();
-
-    // 데이터 배열에서 삭제
-    const index = selectedChunks.indexOf(chunk.h);
-    if (index > -1) {
-      selectedChunks.splice(index, 1);
+  // 2. [핵심] 클릭/터치 시 취소 기능 (데스크탑 클릭 완벽 대응)
+  selectedTag.onclick = function () {
+    // 배열에서 해당 한자 삭제 (가장 뒤에 있는 것부터 삭제하여 중복 단어 오류 방지)
+    for (let i = selectedChunks.length - 1; i >= 0; i--) {
+      if (selectedChunks[i] === chunk.h) {
+        selectedChunks.splice(i, 1);
+        break;
+      }
     }
 
     // 테이블에서 카드 제거
-    selectedTag.remove();
+    this.remove();
 
-    // 아래쪽 카드 풀에서 다시 활성화
+    // 아래쪽 대기 카드 다시 활성화
     cardElement.classList.remove('used');
 
-    // 피드백 메시지 초기화
-    document.getElementById('feedback-msg').innerText = '';
+    // 정답/오답 메시지 초기화
+    const fb = document.getElementById('feedback-msg');
+    if (fb) fb.innerText = '';
   };
 
   display.appendChild(selectedTag);
 
-  // 정답 체크 (모든 카드가 다 올라갔을 때만)
+  // 3. 정답 체크 (모든 카드가 다 올라갔을 때만)
   if (selectedChunks.length === answerOrder.length) {
-    checkAnswer();
+    // 데스크탑에서 너무 빨리 체크되는 것을 방지하기 위해 아주 약간의 시차를 둠
+    setTimeout(checkAnswer, 100);
   }
 }
 
