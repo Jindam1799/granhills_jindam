@@ -67,24 +67,25 @@ let timerInterval;
 let timerSound, correctSound, wrongSound;
 
 /* ============================================================
-   [게임 로직]
+   [핵심 수정] startGame (소리 잠금 해제 강화)
    ============================================================ */
-
 function startGame() {
-  // ★ [사운드 해결] 모든 소리 요소를 변수에 할당하고 강제로 권한 획득
   timerSound = document.getElementById('timer-sound');
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
+  // ★ 시작 버튼을 누를 때 볼륨을 0으로 만들어 '땡' 소리가 나는 것을 방지하고 권한만 획득
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
+      const originalVol = s.volume;
+      s.volume = 0;
       s.muted = false;
-      // 재생 직후 일시정지하여 모바일 브라우저의 '사용자 Gesture' 권한을 확실히 따냄
       s.play()
         .then(() => {
           s.pause();
           s.currentTime = 0;
+          s.volume = originalVol; // 실제 재생 시 소리가 나도록 볼륨 복구
         })
         .catch(() => {});
     }
@@ -99,6 +100,7 @@ function startGame() {
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
 
+  // 화면 전환 후 타이머 요소가 준비될 시간을 줌
   setTimeout(loadQuestion, 150);
 }
 
@@ -119,7 +121,6 @@ function startTimer() {
     timerDisplay.style.color = 'var(--primary)';
   }
 
-  // 모바일 환경을 위해 play()를 명시적으로 호출
   if (timerSound) {
     timerSound.currentTime = 0;
     timerSound.play().catch(() => {});
@@ -155,7 +156,8 @@ function loadQuestion() {
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
   btns.forEach((b) => {
     b.classList.remove('correct', 'wrong');
-    b.blur(); // ★ [호버 해결] 이전 문제에서 남은 포커스 강제 해제
+    // ★ [호버 해결] 문제 로드 시 모든 버튼의 포커스를 해제하여 잔상 방지
+    b.blur();
   });
 
   let correctWord = gameWords[currentIdx];
@@ -208,12 +210,16 @@ function handleError(msg) {
   }, 1200);
 }
 
+/* ============================================================
+   [핵심 수정] selectAnswer (호버 잔상 해결)
+   ============================================================ */
 function selectAnswer(selectedIndex) {
   if (!isClickable) return;
   isClickable = false;
 
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
-  btns[selectedIndex].blur(); // ★ [호버 해결] 터치하는 순간 포커스 해제
+  // ★ [호버 해결] 클릭(터치)하자마자 버튼의 포커스를 해제하여 주황색 잔상 방지
+  btns[selectedIndex].blur();
 
   if (timerSound) timerSound.pause();
   document.querySelector('.choices-area').classList.add('disabled');
@@ -249,7 +255,7 @@ function selectAnswer(selectedIndex) {
 }
 
 function endGame() {
-  clearInterval(timerInterval);
+  if (timerInterval) clearInterval(timerInterval);
   if (timerSound) timerSound.pause();
 
   document.getElementById('game-board').style.display = 'none';
