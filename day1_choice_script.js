@@ -1,5 +1,5 @@
 /* ============================================================
-   [데이터 설정] 
+   [데이터 설정]
    ============================================================ */
 const rawSentenceData = {
   come: [
@@ -63,14 +63,13 @@ let answerOrder = [];
 let timerSound, correctSound, wrongSound;
 
 /* ============================================================
-   ★ [핵심 해결] 효과음 씹힘 방지 전용 함수 ★
-   원본을 건드리지 않고 '복제본'을 만들어 재생합니다.
+   [핵심 함수] 효과음 씹힘 방지 (복제 재생)
    ============================================================ */
 function playEffect(audioElement) {
   if (!audioElement) return;
-  // 소리 요소를 1회용으로 복제해서 켭니다 (겹침 허용, 끊김 절대 방지)
   const clone = audioElement.cloneNode(true);
   clone.volume = 1;
+  clone.muted = false; // ★ 복제본 무조건 음소거 해제
   clone.play().catch(() => {});
 }
 
@@ -82,7 +81,6 @@ function startGame() {
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  // 모바일 권한 획득용 무음 재생 (단 1회만)
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
@@ -93,7 +91,12 @@ function startGame() {
           s.pause();
           s.currentTime = 0;
           s.muted = false;
-        }).catch(() => {});
+        }).catch(() => {
+          // ★ 타이머 침묵 버그 원인 차단!
+          s.muted = false;
+        });
+      } else {
+        s.muted = false;
       }
     }
   });
@@ -184,8 +187,6 @@ function selectChunk(chunk, cardElement) {
 
 function checkAnswer() {
   clearInterval(timerInterval);
-  
-  // 타이머 소리는 멈춥니다
   if (timerSound) timerSound.pause();
 
   const isCorrect = JSON.stringify(selectedChunks) === JSON.stringify(answerOrder);
@@ -193,7 +194,6 @@ function checkAnswer() {
   const display = document.getElementById('sentence-display');
 
   if (isCorrect) {
-    // ★ 씹힘 방지 함수 적용: 정답음
     playEffect(correctSound);
     
     score++;
@@ -203,7 +203,6 @@ function checkAnswer() {
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
-    // ★ 씹힘 방지 함수 적용: 오답음
     playEffect(wrongSound);
     
     fb.innerText = '틀렸어요! 다시 맞춰보세요 🧐';
@@ -238,8 +237,8 @@ function startTimer() {
     timerDisplay.style.color = 'var(--primary)';
   }
 
-  // 타이머 소리는 브금(BGM) 성격이므로 기존 방식 유지
   if (timerSound) {
+    timerSound.muted = false; // ★ 켤 때 한 번 더 확실하게 음소거 해제
     timerSound.pause();
     timerSound.currentTime = 0;
     timerSound.play().catch(() => {});
@@ -264,7 +263,6 @@ function startTimer() {
 function handleTimeOut() {
   if (timerSound) timerSound.pause();
   
-  // ★ 씹힘 방지 함수 적용: 시간초과 오답음
   playEffect(wrongSound);
   
   const display = document.getElementById('sentence-display');
