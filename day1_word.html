@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>진담중국어 - 기초 단어장</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="game-container">
+      <div class="apt-tag">GRAN HILLS GROUP STUDY</div>
+      <button class="back-btn" onclick="location.href = 'index.html'">
+        ◀ 로비로
+      </button>
+
+      <div id="start-screen" class="question-box">
+        <div
+          class="apt-tag"
+          style="
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+          "
+        >
+          STEP 1
+        </div>
+        <h2>단어 스피드 게임</h2>
+        <p>
+          20초 안에 정답을 맞히세요!<br /><span
+            style="color: var(--primary); font-weight: bold"
+            >한자를 클릭하면 병음 힌트</span
+          >가 나옵니다.
+        </p>
+        <button id="start-btn" onclick="startGame()">⚡ 게임 시작</button>
+      </div>
+
+      <div id="game-board" style="display: none">
+        <div class="header">
+          <div class="status-badge">🕒 시간 <span id="timer">20</span>s</div>
+          <div class="status-badge">✅ 정답 <span id="score">0</span> / 20</div>
+        </div>
+        <div class="question-box">
+          <div
+            id="ko-question"
+            onclick="showHint()"
+            style="font-size: 3rem; cursor: pointer"
+          >
+            我
+          </div>
+          <div id="q-pinyin" class="pinyin-text" style="visibility: hidden">
+            wǒ
+          </div>
+          <p style="font-size: 0.7rem; color: #ccc; margin-top: 10px">
+            (모를 때는 한자를 클릭하세요!)
+          </p>
+        </div>
+        <div
+          id="feedback-msg"
+          style="
+            text-align: center;
+            height: 24px;
+            margin-bottom: 10px;
+            font-weight: bold;
+          "
+        ></div>
+        <div class="choices-area">
+          <button class="choice-btn" id="btn-0" onclick="selectAnswer(0)">
+            <span class="cn-text" id="ko-text-0"></span>
+          </button>
+          <button class="choice-btn" id="btn-1" onclick="selectAnswer(1)">
+            <span class="cn-text" id="ko-text-1"></span>
+          </button>
+          <button class="choice-btn" id="btn-2" onclick="selectAnswer(2)">
+            <span class="cn-text" id="ko-text-2"></span>
+          </button>
+          <button class="choice-btn" id="btn-3" onclick="selectAnswer(3)">
+            <span class="cn-text" id="ko-text-3"></span>
+          </button>
+        </div>
+      </div>
+
+      <div id="result-screen">
+        <div class="result-content">
+          <div class="apt-tag">SPEED MASTER</div>
+          <h2>🎉 축하합니다!</h2>
+          <p id="final-score"></p>
+          <button class="home-btn" onclick="location.href = 'index.html'">
+            🏠 로비로 돌아가기
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="day1_word_script.js"></script>
+  </body>
+</html>

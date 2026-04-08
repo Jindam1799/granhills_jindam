@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>진담중국어 - 그랑힐스 오락실</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="intro-overlay" onclick="startLobby()">
+      <video id="intro-video" autoplay muted playsinline>
+        <source src="intro.mp4" type="video/mp4" />
+        영상을 재생할 수 없습니다.
+      </video>
+      <div class="skip-msg">화면을 클릭하면 시작합니다</div>
+    </div>
+
+    <div class="lobby-container" id="main-lobby" style="display: none">
+      <div class="apt-tag">GRAN HILLS GROUP STUDY</div>
+
+      <header class="lobby-header">
+        <h1>진담중국어 <span>스피킹게임</span></h1>
+        <p>입주민을 위한 프리미엄 복습 공간</p>
+      </header>
+
+      <div class="week-section">
+        <div class="week-title">
+          <span class="week-num">Week 1</span>
+          <span class="week-desc">기초 주어와 동사</span>
+        </div>
+        <div class="step-row">
+          <a href="day1_word.html" class="step-card">
+            <span class="step-label">STEP 1</span>
+            <span class="step-name">단어장</span>
+          </a>
+          <a href="day1_choice.html" class="step-card">
+            <span class="step-label">STEP 2</span>
+            <span class="step-name">문형 마스터</span>
+          </a>
+        </div>
+      </div>
+
+      <footer class="lobby-footer">
+        <p class="footer-brand">진담중국어 X 부평 그랑힐스</p>
+        <p class="footer-info">입주민을 위한 맞춤 교육 시스템</p>
+        <p class="copyright">
+          &copy; 2026 JINDAM CHINESE. All rights reserved.
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      const introOverlay = document.getElementById('intro-overlay');
+      const introVideo = document.getElementById('intro-video');
+      const mainLobby = document.getElementById('main-lobby');
+
+      function startLobby() {
+        if (!introOverlay) return;
+
+        // 1. 인트로 투명하게 만들기
+        introOverlay.style.opacity = '0';
+
+        setTimeout(() => {
+          // 2. 인트로 완전히 숨기기
+          introOverlay.style.display = 'none';
+          // 3. 꽁꽁 숨겨뒀던 로비 상자 열기!
+          if (mainLobby) mainLobby.style.display = 'flex';
+
+          // 4. 영상 정지
+          if (introVideo) introVideo.pause();
+        }, 800); // 0.8초간의 투명해지는 애니메이션 후 실행
+      }
+
+      // 영상이 자동으로 끝까지 재생되어도 로비로 이동
+      if (introVideo) {
+        introVideo.onended = function () {
+          startLobby();
+        };
+      }
+    </script>
+  </body>
+</html>

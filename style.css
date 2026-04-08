@@ -1,0 +1,379 @@
+/* ============================================================
+   [사용자 지정 스타일 - 절대 유지 영역]
+   ============================================================ */
+:root {
+  --primary: #ff7800;
+  --primary-light: #fff5f0;
+  --bg-color: #fcfcfc;
+  --card-bg: #ffffff;
+  --text-main: #2d2d2d;
+  --text-gray: #777777;
+  --border: #f0f0f0;
+}
+
+body {
+  font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+  background-color: var(--bg-color);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center; /* 가로만 중앙 */
+  min-height: 100vh;
+  user-select: none;
+}
+
+#game-container,
+.lobby-container {
+  width: 90%;
+  max-width: 440px;
+  padding-top: 60px; /* ★ 상단 여백 ★ */
+  padding-bottom: 80px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.apt-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin: 0 auto 20px;
+  letter-spacing: 1.5px;
+  width: fit-content;
+  text-transform: uppercase;
+}
+
+.lobby-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.lobby-header h1 {
+  font-size: 2.2rem;
+  color: var(--text-main);
+  margin: 0;
+}
+.lobby-header h1 span {
+  color: var(--primary);
+}
+.lobby-header p {
+  color: var(--text-gray);
+  font-size: 0.95rem;
+  margin-top: 10px;
+}
+
+.week-section {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 25px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border);
+  margin-bottom: 25px;
+}
+
+.week-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f8f8f8;
+}
+
+.week-num {
+  font-weight: 900;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+.week-desc {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.step-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.step-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 10px;
+  background: var(--primary-light);
+  border: 1.5px solid #ffe8d9;
+  border-radius: 18px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.step-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  background: #fff1e8;
+}
+.step-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+.step-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.lobby-footer {
+  margin-top: 40px;
+  padding: 30px 20px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer-brand {
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  display: block;
+}
+.footer-info {
+  font-weight: 500;
+  color: #999;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  display: block;
+}
+.copyright {
+  font-size: 0.75rem;
+  color: #ccc;
+}
+
+body::after {
+  content: 'BUPYEONG GRAN HILLS';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--primary);
+  opacity: 0.03;
+  z-index: -1;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   [게임 레이아웃 보강 - 세로 늘어짐 방지 및 가로 정렬]
+   ============================================================ */
+
+/* 1. 게임 전용 카드박스 */
+.question-box {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 35px 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border);
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* 2. 상태창 가로 배치 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.status-badge {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 8px 15px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-gray);
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+.status-badge span {
+  color: var(--primary);
+}
+
+/* 3. 4지선다 가로 배치 (2x2 그리드) */
+.choices-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2열 배치 */
+  gap: 12px;
+  width: 100%;
+}
+.choice-btn {
+  background: var(--card-bg);
+  border: 2px solid var(--border);
+  padding: 25px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.choice-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.cn-text {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* 4. 공통 컨트롤 버튼 */
+#start-btn,
+.home-btn {
+  padding: 18px;
+  font-size: 1.15rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  width: 100%;
+  font-weight: 800;
+  cursor: pointer;
+}
+.back-btn {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  padding: 8px 15px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text-gray);
+  font-size: 0.85rem;
+  z-index: 10;
+}
+
+/* 5. 팝업창 디자인 */
+#result-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+.result-content {
+  background: var(--card-bg);
+  width: 85%;
+  max-width: 350px;
+  padding: 40px 20px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* 정오답 효과 */
+.choice-btn.correct {
+  border-color: #4caf50 !important;
+  background: #f1f8f1 !important;
+  color: #4caf50;
+}
+.choice-btn.wrong {
+  border-color: #f44336 !important;
+  background: #fff5f5 !important;
+  color: #f44336;
+}
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+  75% {
+    transform: translateX(-8px);
+  }
+}
+/* 인트로 오버레이 스타일 */
+#intro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000; /* 영상 로딩 전 검은 배경 */
+  z-index: 9999; /* 모든 요소보다 위에 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: opacity 0.8s ease; /* 사라질 때 부드럽게 */
+}
+
+#intro-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 화면에 꽉 차게 (비율 유지) */
+}
+
+.skip-msg {
+  position: absolute;
+  bottom: 50px;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: rgba(255, 120, 0, 0.6); /* 메인 테마 오렌지색 투명도 */
+  padding: 10px 30px;
+  border-radius: 50px;
+  animation: blink 1.5s infinite; /* 깜빡이는 효과 */
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
