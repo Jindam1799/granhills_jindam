@@ -104,6 +104,23 @@
       </div>
     </div>
     <script src="day1_word_script.js"></script>
-    <audio id="timer-sound" src="timer_tick.mp3" loop></audio> <audio id="correct-sound" src="correct.mp3"></audio>      <audio id="wrong-sound" src="wrong.mp3"></audio>
+    <audio id="timer-sound" src="timer_tick.mp3" loop preload="auto"></audio>
+    <audio id="correct-sound" src="correct.mp3" preload="auto"></audio>
+    <audio id="wrong-sound" src="wrong.mp3" preload="auto"></audio>
+
+    <style>
+      /* 클릭 금지 상태일 때 버튼 효과 제거 */
+      .choices-area.disabled {
+        pointer-events: none; /* 클릭 차단 */
+      }
+      .choices-area.disabled .choice-btn:hover {
+        transform: none !important; /* 커지는 효과 제거 */
+        box-shadow: none !important;
+      }
+    </style>
+
+    <audio id="timer-sound" src="timer_tick.mp3" loop preload="auto"></audio>
+    <audio id="correct-sound" src="correct.mp3" preload="auto"></audio>
+    <audio id="wrong-sound" src="wrong.mp3" preload="auto"></audio>
   </body>
 </html>
