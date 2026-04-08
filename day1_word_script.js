@@ -12,7 +12,7 @@ const studyList = [
   { hanzi: '她', pinyin: 'tā', ko: '그녀', cat: 'pronoun' },
   { hanzi: '우리', pinyin: 'wǒmen', ko: '우리', cat: 'pronoun' },
   { hanzi: '你们', pinyin: 'nǐmen', ko: '너희', cat: 'pronoun' },
-  { hanzi: '他们', pinyin: 'tāmen', ko: '그들 (남/혼합)', cat: 'pronoun' },
+  { hanzi: ' ellos', pinyin: 'tāmen', ko: '그들 (남/혼합)', cat: 'pronoun' },
   { hanzi: '她们', pinyin: 'tāmen', ko: '그녀들', cat: 'pronoun' },
   { hanzi: '大家', pinyin: 'dàjiā', ko: '모두, 여러분', cat: 'pronoun' },
   { hanzi: '老师', pinyin: 'lǎoshī', ko: '선생님', cat: 'people' },
@@ -55,10 +55,6 @@ const extraDistractors = [
   { ko: '저녁', cat: 'time' },
 ];
 
-/* ============================================================
-   [게임 로직]
-   ============================================================ */
-
 let gameWords = [];
 const TOTAL_QUESTIONS = 20;
 let currentIdx = 0;
@@ -68,37 +64,57 @@ let correctIdx = 0;
 let timeLeft = 20;
 let timerInterval;
 
-// [추가] 효과음 요소 참조
-const timerSound = document.getElementById('timer-sound');
-const correctSound = document.getElementById('correct-sound');
-const wrongSound = document.getElementById('wrong-sound');
+let timerSound, correctSound, wrongSound;
 
 function startGame() {
+  timerSound = document.getElementById('timer-sound');
+  correctSound = document.getElementById('correct-sound');
+  wrongSound = document.getElementById('wrong-sound');
+
+  [timerSound, correctSound, wrongSound].forEach((s) => {
+    if (s) {
+      s.muted = false;
+      s.play()
+        .then(() => {
+          s.pause();
+          s.currentTime = 0;
+        })
+        .catch(() => {});
+    }
+  });
+
   gameWords = [...studyList]
     .sort(() => Math.random() - 0.5)
     .slice(0, TOTAL_QUESTIONS);
+  currentIdx = 0;
+  score = 0;
+
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
-  loadQuestion();
+
+  setTimeout(loadQuestion, 100);
 }
 
 function showHint() {
-  document.getElementById('q-pinyin').style.visibility = 'visible';
+  if (!isClickable) return;
+  const pinyinElem = document.getElementById('q-pinyin');
+  pinyinElem.innerText = gameWords[currentIdx].pinyin;
+  pinyinElem.style.visibility = 'visible';
 }
 
 function startTimer() {
   clearInterval(timerInterval);
-
-  // [추가] 타이머 소리 재생
-  if (timerSound) {
-    timerSound.currentTime = 0;
-    timerSound.play().catch((e) => console.log('소리 재생 대기'));
-  }
+  if (!timerSound) timerSound = document.getElementById('timer-sound');
 
   timeLeft = 20;
   const timerDisplay = document.getElementById('timer');
   timerDisplay.innerText = timeLeft;
   timerDisplay.style.color = 'var(--primary)';
+
+  if (timerSound) {
+    timerSound.currentTime = 0;
+    timerSound.play().catch(() => {});
+  }
 
   timerInterval = setInterval(() => {
     timeLeft--;
@@ -117,8 +133,14 @@ function loadQuestion() {
     return;
   }
   isClickable = true;
+
+  const pinyinElem = document.getElementById('q-pinyin');
+  pinyinElem.style.visibility = 'hidden';
+  pinyinElem.innerText = '';
+
+  document.querySelector('.choices-area').classList.remove('disabled');
   document.getElementById('feedback-msg').innerText = '';
-  document.getElementById('q-pinyin').style.visibility = 'hidden';
+
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
   btns.forEach((b) => b.classList.remove('correct', 'wrong'));
 
@@ -127,42 +149,38 @@ function loadQuestion() {
   let potentialDistractors = [...studyList, ...extraDistractors].filter(
     (w) => w.cat === correctWord.cat && w.ko !== correctWord.ko,
   );
-
   potentialDistractors.sort(() => Math.random() - 0.5);
 
   let options = [correctWord];
   for (let i = 0; i < 3; i++) {
-    if (potentialDistractors[i]) {
-      options.push(potentialDistractors[i]);
-    }
+    if (potentialDistractors[i]) options.push(potentialDistractors[i]);
   }
-
   while (options.length < 4) {
     let rand = studyList[Math.floor(Math.random() * studyList.length)];
     if (!options.find((o) => o.ko === rand.ko)) options.push(rand);
   }
 
   options.sort(() => Math.random() - 0.5);
+  window.currentOptions = options;
   correctIdx = options.findIndex((o) => o.ko === correctWord.ko);
 
   document.getElementById('ko-question').innerText = correctWord.hanzi;
-  document.getElementById('q-pinyin').innerText = correctWord.pinyin;
   document.getElementById('score').innerText = score;
 
   for (let i = 0; i < 4; i++) {
     document.getElementById(`ko-text-${i}`).innerText = options[i].ko;
   }
+
   startTimer();
 }
 
 function handleError(msg) {
   isClickable = false;
-
-  // [추가] 시간 초과 시 오답 소리 및 타이머 정지
   if (timerSound) timerSound.pause();
+  if (!wrongSound) wrongSound = document.getElementById('wrong-sound');
   if (wrongSound) {
     wrongSound.currentTime = 0;
-    wrongSound.play();
+    wrongSound.play().catch(() => {});
   }
 
   const qBox = document.querySelector('.question-box');
@@ -173,9 +191,8 @@ function handleError(msg) {
 
   setTimeout(() => {
     qBox.classList.remove('shake');
-    isClickable = true;
-    fb.innerText = '';
-    startTimer();
+    // currentIdx++; // 다음 문제로 넘어가지 않도록 삭제
+    loadQuestion();
   }, 1200);
 }
 
@@ -183,51 +200,44 @@ function selectAnswer(selectedIndex) {
   if (!isClickable) return;
   isClickable = false;
 
-  // [추가] 정답 확인 로직 및 타이머 정지
   if (timerSound) timerSound.pause();
+  document.querySelector('.choices-area').classList.add('disabled');
 
   const isCorrect = selectedIndex === correctIdx;
   const fb = document.getElementById('feedback-msg');
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
 
   if (isCorrect) {
-    // [추가] 정답 소리
+    if (!correctSound) correctSound = document.getElementById('correct-sound');
     if (correctSound) {
       correctSound.currentTime = 0;
-      correctSound.play();
+      correctSound.play().catch(() => {});
     }
     score++;
     btns[selectedIndex].classList.add('correct');
     fb.innerText = '딩동댕! 정답입니다 👏';
     fb.style.color = 'var(--correct)';
 
-    currentIdx++;
+    currentIdx++; // 정답일 때만 인덱스 증가
     setTimeout(loadQuestion, 1200);
   } else {
-    // [추가] 오답 소리
+    if (!wrongSound) wrongSound = document.getElementById('wrong-sound');
     if (wrongSound) {
       wrongSound.currentTime = 0;
-      wrongSound.play();
+      wrongSound.play().catch(() => {});
     }
     btns[selectedIndex].classList.add('wrong');
-    btns[correctIdx].classList.add('correct');
-    fb.innerText = '아쉬워요! 다시 한 번 생각해보세요 🧐';
+
+    fb.innerText = '아쉬워요! 다시 한번 생각해보세요 🧐';
     fb.style.color = 'var(--wrong)';
 
-    // 오답 시 1.5초 후 다시 기회 부여 (startTimer 재호출)
-    setTimeout(() => {
-      btns[selectedIndex].classList.remove('wrong');
-      btns[correctIdx].classList.remove('correct');
-      fb.innerText = '';
-      isClickable = true;
-      startTimer();
-    }, 1500);
+    // currentIdx++; // 다음 문제로 넘어가지 않도록 삭제
+    setTimeout(loadQuestion, 1500); // 1.5초 후 같은 문제를 다시 세팅(셔플 포함)
   }
 }
 
 function endGame() {
   clearInterval(timerInterval);
-  // [추가] 게임 종료 시 타이머 소리 완전 정지
   if (timerSound) timerSound.pause();
 
   document.getElementById('game-board').style.display = 'none';
