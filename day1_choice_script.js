@@ -371,12 +371,11 @@ let timerSound, correctSound, wrongSound;
    [핵심 함수] startGame
    ============================================================ */
 function startGame() {
-  // 1. 소리 요소 찾기
   timerSound = document.getElementById('timer-sound');
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  // 2. 모바일/브라우저 소리 권한 해제 (무음으로 깨우기)
+  // ★ [사운드 해결] 모든 소리 요소를 무음으로 한 번 재생하여 모바일 권한 획득
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
@@ -393,7 +392,6 @@ function startGame() {
     }
   });
 
-  // 3. 문제 큐 생성
   gameQueue = [];
   ['come', 'listen', 'watch', 'buy'].forEach((verb) => {
     if (rawSentenceData[verb]) {
@@ -406,12 +404,11 @@ function startGame() {
   currentIdx = 0;
   score = 0;
 
-  // 4. 화면 전환
   document.getElementById('ko-sentence').innerText = '준비...';
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
 
-  // 5. [수정] 화면 렌더링 후 타이머가 확실히 동작하도록 미세한 지연 후 시작
+  // 화면 전환 후 타이머가 확실히 동작하도록 미세 지연 후 로드
   setTimeout(loadQuestion, 150);
 }
 
@@ -440,12 +437,14 @@ function loadQuestion() {
       pool.appendChild(card);
     });
 
-  // 타이머 시작
   startTimer();
 }
 
 function selectChunk(chunk, cardElement) {
   if (cardElement.classList.contains('used')) return;
+
+  // ★ [호버 해결] 터치하는 순간 포커스 해제하여 모바일 잔상 방지
+  cardElement.blur();
 
   cardElement.classList.add('used');
   selectedChunks.push(chunk.h);
@@ -514,9 +513,10 @@ function checkAnswer() {
 function resetCurrentSentence() {
   selectedChunks = [];
   document.getElementById('sentence-display').innerHTML = '';
-  document
-    .querySelectorAll('.chunk-card')
-    .forEach((c) => c.classList.remove('used'));
+  document.querySelectorAll('.chunk-card').forEach((c) => {
+    c.classList.remove('used');
+    c.blur(); // 포커스 초기화
+  });
   document.getElementById('feedback-msg').innerText = '';
   startTimer();
 }
@@ -525,29 +525,24 @@ function resetCurrentSentence() {
    [핵심 함수] startTimer (보강됨)
    ============================================================ */
 function startTimer() {
-  // 기존 타이머 청소
   if (timerInterval) clearInterval(timerInterval);
 
   timeLeft = 20;
 
-  // [수정] 타이머 숫자를 화면에 즉시 띄우고 색상을 초기화
   const timerDisplay = document.getElementById('timer');
   if (timerDisplay) {
     timerDisplay.innerText = timeLeft;
     timerDisplay.style.color = 'var(--primary)';
   }
 
-  // 타이머 소리 재생
   if (timerSound) {
     timerSound.currentTime = 0;
     timerSound.play().catch(() => {});
   }
 
-  // 카운트다운 인터벌 시작
   timerInterval = setInterval(() => {
     timeLeft--;
 
-    // 매 초마다 숫자 UI 갱신 (요소 확인 필수)
     const currentDisplay = document.getElementById('timer');
     if (currentDisplay) {
       currentDisplay.innerText = timeLeft;
