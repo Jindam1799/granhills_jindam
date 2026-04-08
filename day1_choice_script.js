@@ -1,359 +1,54 @@
+/* ============================================================
+   [데이터 설정]
+   ============================================================ */
 const rawSentenceData = {
   come: [
-    {
-      ko: '그는 옵니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '来', p: 'lái' },
-      ],
-    },
-    {
-      ko: '그는 안 옵니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '来', p: 'lái' },
-      ],
-    },
-    {
-      ko: '그는 옵니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '来', p: 'lái' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 안 옵니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '来', p: 'lái' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 옵니까 안 옵니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '来', p: 'lái' },
-        { h: '不', p: 'bu' },
-        { h: '来', p: 'lái' },
-      ],
-    },
-    {
-      ko: '그는 한국에 옵니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '来', p: 'lái' },
-        { h: '韩国', p: 'hánguó' },
-      ],
-    },
-    {
-      ko: '그는 한국에 안 옵니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '来', p: 'lái' },
-        { h: '韩国', p: 'hánguó' },
-      ],
-    },
-    {
-      ko: '그는 한국에 옵니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '来', p: 'lái' },
-        { h: '韩国', p: 'hánguó' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 한국에 안 옵니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '来', p: 'lái' },
-        { h: '韩国', p: 'hánguó' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 한국에 옵니까 안 옵니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '来', p: 'lái' },
-        { h: '不', p: 'bu' },
-        { h: '来', p: 'lái' },
-        { h: '韩国', p: 'hánguó' },
-      ],
-    },
+    { ko: '그는 옵니다.', chunks: [{ h: '他', p: 'tā' }, { h: '来', p: 'lái' }] },
+    { ko: '그는 안 옵니다.', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '来', p: 'lái' }] },
+    { ko: '그는 옵니까?', chunks: [{ h: '他', p: 'tā' }, { h: '来', p: 'lái' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 안 옵니까?', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '来', p: 'lái' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 옵니까 안 옵니까?', chunks: [{ h: '他', p: 'tā' }, { h: '来', p: 'lái' }, { h: '不', p: 'bu' }, { h: '来', p: 'lái' }] },
+    { ko: '그는 한국에 옵니다.', chunks: [{ h: '他', p: 'tā' }, { h: '来', p: 'lái' }, { h: '韩国', p: 'hánguó' }] },
+    { ko: '그는 한국에 안 옵니다.', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '来', p: 'lái' }, { h: '韩国', p: 'hánguó' }] },
+    { ko: '그는 한국에 옵니까?', chunks: [{ h: '他', p: 'tā' }, { h: '来', p: 'lái' }, { h: '韩国', p: 'hánguó' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 한국에 안 옵니까?', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '来', p: 'lái' }, { h: '韩国', p: 'hánguó' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 한국에 옵니까 안 옵니까?', chunks: [{ h: '他', p: 'tā' }, { h: '来', p: 'lái' }, { h: '不', p: 'bu' }, { h: '来', p: 'lái' }, { h: '韩国', p: 'hánguó' }] },
   ],
   listen: [
-    {
-      ko: '그는 듣습니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '听', p: 'tīng' },
-      ],
-    },
-    {
-      ko: '그는 안 듣습니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '听', p: 'tīng' },
-      ],
-    },
-    {
-      ko: '그는 듣습니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '听', p: 'tīng' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 안 듣습니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '听', p: 'tīng' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 듣습니까 안 듣습니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '听', p: 'tīng' },
-        { h: '不', p: 'bu' },
-        { h: '听', p: 'tīng' },
-      ],
-    },
-    {
-      ko: '그는 음악을 듣습니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '听', p: 'tīng' },
-        { h: '音乐', p: 'yīnyuè' },
-      ],
-    },
-    {
-      ko: '그는 음악을 안 듣습니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '听', p: 'tīng' },
-        { h: '音乐', p: 'yīnyuè' },
-      ],
-    },
-    {
-      ko: '그는 음악을 듣습니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '听', p: 'tīng' },
-        { h: '音乐', p: 'yīnyuè' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 음악을 안 듣습니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '听', p: 'tīng' },
-        { h: '音乐', p: 'yīnyuè' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 음악을 듣습니까 안 듣습니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '听', p: 'tīng' },
-        { h: '不', p: 'bu' },
-        { h: '听', p: 'tīng' },
-        { h: '音乐', p: 'yīnyuè' },
-      ],
-    },
+    { ko: '그는 듣습니다.', chunks: [{ h: '他', p: 'tā' }, { h: '听', p: 'tīng' }] },
+    { ko: '그는 안 듣습니다.', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '听', p: 'tīng' }] },
+    { ko: '그는 듣습니까?', chunks: [{ h: '他', p: 'tā' }, { h: '听', p: 'tīng' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 안 듣습니까?', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '听', p: 'tīng' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 듣습니까 안 듣습니까?', chunks: [{ h: '他', p: 'tā' }, { h: '听', p: 'tīng' }, { h: '不', p: 'bu' }, { h: '听', p: 'tīng' }] },
+    { ko: '그는 음악을 듣습니다.', chunks: [{ h: '他', p: 'tā' }, { h: '听', p: 'tīng' }, { h: '音乐', p: 'yīnyuè' }] },
+    { ko: '그는 음악을 안 듣습니다.', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '听', p: 'tīng' }, { h: '音乐', p: 'yīnyuè' }] },
+    { ko: '그는 음악을 듣습니까?', chunks: [{ h: '他', p: 'tā' }, { h: '听', p: 'tīng' }, { h: '音乐', p: 'yīnyuè' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 음악을 안 듣습니까?', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '听', p: 'tīng' }, { h: '音乐', p: 'yīnyuè' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 음악을 듣습니까 안 듣습니까?', chunks: [{ h: '他', p: 'tā' }, { h: '听', p: 'tīng' }, { h: '不', p: 'bu' }, { h: '听', p: 'tīng' }, { h: '音乐', p: 'yīnyuè' }] },
   ],
   watch: [
-    {
-      ko: '그는 봅니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '看', p: 'kàn' },
-      ],
-    },
-    {
-      ko: '그는 안 봅니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '看', p: 'kàn' },
-      ],
-    },
-    {
-      ko: '그는 봅니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '看', p: 'kàn' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 안 봅니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bú' },
-        { h: '看', p: 'kàn' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 봅니까 안 봅니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '看', p: 'kàn' },
-        { h: '不', p: 'bu' },
-        { h: '看', p: 'kàn' },
-      ],
-    },
-    {
-      ko: '그는 영화를 봅니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '看', p: 'kàn' },
-        { h: '电影', p: 'diànyǐng' },
-      ],
-    },
-    {
-      ko: '그는 영화를 안 봅니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bú' },
-        { h: '看', p: 'kàn' },
-        { h: '电影', p: 'diànyǐng' },
-      ],
-    },
-    {
-      ko: '그는 영화를 봅니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '看', p: 'kàn' },
-        { h: '电影', p: 'diànyǐng' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 영화를 안 봅니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bú' },
-        { h: '看', p: 'kàn' },
-        { h: '电影', p: 'diànyǐng' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 영화를 봅니까 안 봅니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '看', p: 'kàn' },
-        { h: '不', p: 'bu' },
-        { h: '看', p: 'kàn' },
-        { h: '电影', p: 'diànyǐng' },
-      ],
-    },
+    { ko: '그는 봅니다.', chunks: [{ h: '他', p: 'tā' }, { h: '看', p: 'kàn' }] },
+    { ko: '그는 안 봅니다.', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '看', p: 'kàn' }] },
+    { ko: '그는 봅니까?', chunks: [{ h: '他', p: 'tā' }, { h: '看', p: 'kàn' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 안 봅니까?', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bú' }, { h: '看', p: 'kàn' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 봅니까 안 봅니까?', chunks: [{ h: '他', p: 'tā' }, { h: '看', p: 'kàn' }, { h: '不', p: 'bu' }, { h: '看', p: 'kàn' }] },
+    { ko: '그는 영화를 봅니다.', chunks: [{ h: '他', p: 'tā' }, { h: '看', p: 'kàn' }, { h: '电影', p: 'diànyǐng' }] },
+    { ko: '그는 영화를 안 봅니다.', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bú' }, { h: '看', p: 'kàn' }, { h: '电影', p: 'diànyǐng' }] },
+    { ko: '그는 영화를 봅니까?', chunks: [{ h: '他', p: 'tā' }, { h: '看', p: 'kàn' }, { h: '电影', p: 'diànyǐng' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 영화를 안 봅니까?', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bú' }, { h: '看', p: 'kàn' }, { h: '电影', p: 'diànyǐng' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 영화를 봅니까 안 봅니까?', chunks: [{ h: '他', p: 'tā' }, { h: '看', p: 'kàn' }, { h: '不', p: 'bu' }, { h: '看', p: 'kàn' }, { h: '电影', p: 'diànyǐng' }] },
   ],
   buy: [
-    {
-      ko: '그는 삽니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '买', p: 'mǎi' },
-      ],
-    },
-    {
-      ko: '그는 안 삽니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '买', p: 'mǎi' },
-      ],
-    },
-    {
-      ko: '그는 삽니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '买', p: 'mǎi' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 안 삽니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '买', p: 'mǎi' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 삽니까 안 삽니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '买', p: 'mǎi' },
-        { h: '不', p: 'bu' },
-        { h: '买', p: 'mǎi' },
-      ],
-    },
-    {
-      ko: '그는 책을 삽니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '买', p: 'mǎi' },
-        { h: '书', p: 'shū' },
-      ],
-    },
-    {
-      ko: '그는 책을 안 삽니다.',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '买', p: 'mǎi' },
-        { h: '书', p: 'shū' },
-      ],
-    },
-    {
-      ko: '그는 책을 삽니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '买', p: 'mǎi' },
-        { h: '书', p: 'shū' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 책을 안 삽니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
-        { h: '买', p: 'mǎi' },
-        { h: '书', p: 'shū' },
-        { h: '吗', p: 'ma' },
-      ],
-    },
-    {
-      ko: '그는 책을 삽니까 안 삽니까?',
-      chunks: [
-        { h: '他', p: 'tā' },
-        { h: '买', p: 'mǎi' },
-        { h: '不', p: 'bu' },
-        { h: '买', p: 'mǎi' },
-        { h: '书', p: 'shū' },
-      ],
-    },
+    { ko: '그는 삽니다.', chunks: [{ h: '他', p: 'tā' }, { h: '买', p: 'mǎi' }] },
+    { ko: '그는 안 삽니다.', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '买', p: 'mǎi' }] },
+    { ko: '그는 삽니까?', chunks: [{ h: '他', p: 'tā' }, { h: '买', p: 'mǎi' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 안 삽니까?', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '买', p: 'mǎi' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 삽니까 안 삽니까?', chunks: [{ h: '他', p: 'tā' }, { h: '买', p: 'mǎi' }, { h: '不', p: 'bu' }, { h: '买', p: 'mǎi' }] },
+    { ko: '그는 책을 삽니다.', chunks: [{ h: '他', p: 'tā' }, { h: '买', p: 'mǎi' }, { h: '书', p: 'shū' }] },
+    { ko: '그는 책을 안 삽니다.', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '买', p: 'mǎi' }, { h: '书', p: 'shū' }] },
+    { ko: '그는 책을 삽니까?', chunks: [{ h: '他', p: 'tā' }, { h: '买', p: 'mǎi' }, { h: '书', p: 'shū' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 책을 안 삽니까?', chunks: [{ h: '他', p: 'tā' }, { h: '不', p: 'bù' }, { h: '买', p: 'mǎi' }, { h: '书', p: 'shū' }, { h: '吗', p: 'ma' }] },
+    { ko: '그는 책을 삽니까 안 삽니까?', chunks: [{ h: '他', p: 'tā' }, { h: '买', p: 'mǎi' }, { h: '不', p: 'bu' }, { h: '买', p: 'mǎi' }, { h: '书', p: 'shū' }] },
   ],
 };
 
@@ -375,19 +70,17 @@ function startGame() {
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  // ★ [사운드 해결] 볼륨 0으로 재생하여 권한만 획득 (시작 시 소음 방지)
+  // ★ [사운드 해결] 확실한 음소거(muted)로 아이폰/안드로이드 소음 원천 차단
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
-      const originalVol = s.volume;
-      s.volume = 0;
-      s.muted = false;
+      s.muted = true; // 무조건 음소거
       let p = s.play();
       if (p !== undefined) {
         p.then(() => {
           s.pause();
           s.currentTime = 0;
-          s.volume = originalVol;
+          s.muted = false; // 권한 획득 후 음소거 해제
         }).catch(() => {});
       }
     }
@@ -409,7 +102,7 @@ function startGame() {
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
 
-  setTimeout(loadQuestion, 150);
+  setTimeout(loadQuestion, 200); // 화면 안착 보장
 }
 
 function loadQuestion() {
@@ -432,11 +125,10 @@ function loadQuestion() {
     .forEach((chunk) => {
       const card = document.createElement('div');
       card.className = 'chunk-card';
-      // [호버 해결] 탭 인덱스를 주어 포커스 제어 가능하게 함
       card.setAttribute('tabindex', '-1');
       card.innerHTML = `<div class="cn-text">${chunk.h}</div><div class="pinyin-text">${chunk.p}</div>`;
       card.onclick = () => {
-        card.blur(); // ★ 클릭 즉시 포커스 해제 (잔상 방지)
+        card.blur(); // 잔상 제거
         selectChunk(chunk, card);
       };
       pool.appendChild(card);
@@ -448,6 +140,7 @@ function loadQuestion() {
 function selectChunk(chunk, cardElement) {
   if (cardElement.classList.contains('used')) return;
 
+  cardElement.blur(); // 클릭 시 잔상 방지
   cardElement.classList.add('used');
   selectedChunks.push(chunk.h);
 
@@ -481,13 +174,14 @@ function checkAnswer() {
   clearInterval(timerInterval);
   if (timerSound) timerSound.pause();
 
-  const isCorrect =
-    JSON.stringify(selectedChunks) === JSON.stringify(answerOrder);
+  const isCorrect = JSON.stringify(selectedChunks) === JSON.stringify(answerOrder);
   const fb = document.getElementById('feedback-msg');
   const display = document.getElementById('sentence-display');
 
   if (isCorrect) {
+    // 오디오 중첩 방지를 위해 pause & currentTime 초기화
     if (correctSound) {
+      correctSound.pause();
       correctSound.currentTime = 0;
       correctSound.play().catch(() => {});
     }
@@ -499,6 +193,7 @@ function checkAnswer() {
     setTimeout(loadQuestion, 1200);
   } else {
     if (wrongSound) {
+      wrongSound.pause();
       wrongSound.currentTime = 0;
       wrongSound.play().catch(() => {});
     }
@@ -517,18 +212,14 @@ function resetCurrentSentence() {
   document.getElementById('sentence-display').innerHTML = '';
   document.querySelectorAll('.chunk-card').forEach((c) => {
     c.classList.remove('used');
-    c.blur(); // 포커스 초기화
+    c.blur();
   });
   document.getElementById('feedback-msg').innerText = '';
   startTimer();
 }
 
-/* ============================================================
-   [핵심 함수] startTimer (보강됨)
-   ============================================================ */
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
-
   timeLeft = 20;
 
   const timerDisplay = document.getElementById('timer');
@@ -538,13 +229,13 @@ function startTimer() {
   }
 
   if (timerSound) {
+    timerSound.pause();
     timerSound.currentTime = 0;
     timerSound.play().catch(() => {});
   }
 
   timerInterval = setInterval(() => {
     timeLeft--;
-
     const currentDisplay = document.getElementById('timer');
     if (currentDisplay) {
       currentDisplay.innerText = timeLeft;
@@ -560,15 +251,18 @@ function startTimer() {
 
 function handleTimeOut() {
   if (timerSound) timerSound.pause();
+  
   if (wrongSound) {
+    wrongSound.pause();
     wrongSound.currentTime = 0;
     wrongSound.play().catch(() => {});
   }
+  
   const display = document.getElementById('sentence-display');
-  document.getElementById('feedback-msg').innerText =
-    '시간 초과! 다시 도전! ⏰';
+  document.getElementById('feedback-msg').innerText = '시간 초과! 다시 도전! ⏰';
   document.getElementById('feedback-msg').style.color = 'var(--wrong)';
   display.classList.add('shake');
+  
   setTimeout(() => {
     display.classList.remove('shake');
     resetCurrentSentence();
@@ -580,7 +274,7 @@ function endGame() {
   if (timerSound) timerSound.pause();
   document.getElementById('game-board').style.display = 'none';
   const result = document.getElementById('result-screen');
-  result.style.display = 'flex';
+  if (result) result.style.display = 'flex';
   document.getElementById('final-score').innerHTML =
     `오늘 배운 문장을 모두 마스터 했습니다.<br>(이 화면을 캡쳐해서 카톡방에 올려주세요!)`;
 }
