@@ -405,16 +405,44 @@ function loadQuestion() {
 
 function selectChunk(chunk, cardElement) {
   if (cardElement.classList.contains('used')) return;
+
+  // 1. 아래쪽 카드 비활성화
   cardElement.classList.add('used');
   selectedChunks.push(chunk.h);
 
   const display = document.getElementById('sentence-display');
   const selectedTag = document.createElement('div');
   selectedTag.className = 'selected-card';
-  // ★ HTML 구조 내 클래스 부여로 한자를 병음보다 훨씬 크게 조절 ★
+  // 클릭이 가능하다는 시각적 힌트 (손가락 모양)
+  selectedTag.style.cursor = 'pointer';
+
+  // 테이블 위 카드 구성 (한자 크게, 병음 작게)
   selectedTag.innerHTML = `<div class="hz-text">${chunk.h}</div><div class="py-text">${chunk.p}</div>`;
+
+  // ★ [핵심 기능] 테이블에 올라간 카드를 클릭하면 제자리로! ★
+  selectedTag.onclick = (e) => {
+    // 이벤트 전파 방지 (혹시 모를 버그 방지)
+    e.stopPropagation();
+
+    // 데이터 배열에서 삭제
+    const index = selectedChunks.indexOf(chunk.h);
+    if (index > -1) {
+      selectedChunks.splice(index, 1);
+    }
+
+    // 테이블에서 카드 제거
+    selectedTag.remove();
+
+    // 아래쪽 카드 풀에서 다시 활성화
+    cardElement.classList.remove('used');
+
+    // 피드백 메시지 초기화
+    document.getElementById('feedback-msg').innerText = '';
+  };
+
   display.appendChild(selectedTag);
 
+  // 정답 체크 (모든 카드가 다 올라갔을 때만)
   if (selectedChunks.length === answerOrder.length) {
     checkAnswer();
   }
