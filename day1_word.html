@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>진담중국어 - 기초 단어장</title>
+    <title>진담중국어 - 필수단어</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -25,14 +25,36 @@
         >
           STEP 1
         </div>
-        <h2>단어 스피드 게임</h2>
-        <p>
-          20초 안에 정답을 맞히세요!<br /><span
-            style="color: var(--primary); font-weight: bold"
+        <h2 style="font-size: 2.2rem; margin-top: 10px">단어 스피드 게임</h2>
+
+        <p style="font-size: 1.2rem; line-height: 1.6; color: #555">
+          20초 안에 정답을 맞히세요!<br />
+          <span style="color: var(--primary); font-weight: bold"
             >한자를 클릭하면 병음 힌트</span
           >가 나옵니다.
         </p>
-        <button id="start-btn" onclick="startGame()">⚡ 게임 시작</button>
+
+        <p
+          style="
+            font-size: 1.1rem;
+            background: #fff5f0;
+            padding: 10px;
+            border-radius: 15px;
+            color: #444;
+            margin-top: 15px;
+            border: 1px solid #ffe8d9;
+          "
+        >
+          "한자를 보고 읽을 수 있도록 <br />
+          <span style="color: var(--primary); font-weight: bold"
+            >소리를 내어</span
+          >
+          크게 읽어주세요!"
+        </p>
+
+        <button id="start-btn" onclick="startGame()" style="margin-top: 20px">
+          ⚡ 게임 시작
+        </button>
       </div>
 
       <div id="game-board" style="display: none">
