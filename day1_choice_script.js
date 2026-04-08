@@ -520,5 +520,5 @@ function endGame() {
   const result = document.getElementById('result-screen');
   result.style.display = 'flex';
   document.getElementById('final-score').innerHTML =
-    `오늘 배운 문장을 모두 마스터했습니다.`;
+    `오늘 배운 문장을 모두 마스터 했습니다.</b>(이 화면을 캡쳐해서 카톡방에 올려주세요!)`;
 }
