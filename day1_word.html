@@ -13,24 +13,39 @@
         ◀ 로비로
       </button>
 
-<div id="start-screen" class="question-box">
-  <div class="apt-tag" style="background: var(--primary); color: white; border: none; border-radius: 50px;">
-    STEP 1
-  </div>
-  <h2 style="font-size: 2.2rem; margin-top: 10px;">단어 스피드 게임</h2>
+      <div id="start-screen" class="question-box">
+        <div
+          class="apt-tag"
+          style="
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+          "
+        >
+          STEP 1
+        </div>
+        <h2 style="font-size: 2.2rem; margin-top: 10px">단어 스피드 게임</h2>
 
-  <p class="intro-text">
-    20초 안에 정답을 맞히세요!<br />
-    <span style="color: var(--primary); font-weight: bold;">한자를 클릭하면 병음 힌트</span>가 나옵니다.
-  </p>
+        <p class="intro-text">
+          20초 안에 정답을 맞히세요!<br />
+          <span style="color: var(--primary); font-weight: bold"
+            >한자를 클릭하면 병음 힌트</span
+          >가 나옵니다.
+        </p>
 
-  <p class="voice-instruction">
-    "한자를 보고 읽을 수 있도록<br />
-    <span style="color: var(--primary); font-weight: bold;">소리를 내어</span> 크게 읽어주세요!"
-  </p>
+        <p class="voice-instruction">
+          "한자를 보고 읽을 수 있도록<br />
+          <span style="color: var(--primary); font-weight: bold"
+            >소리를 내어</span
+          >
+          크게 읽어주세요!"
+        </p>
 
-  <button id="start-btn" onclick="startGame()" style="margin-top: 20px;">⚡ 게임 시작</button>
-</div>
+        <button id="start-btn" onclick="startGame()" style="margin-top: 20px">
+          ⚡ 게임 시작
+        </button>
+      </div>
 
       <div id="game-board" style="display: none">
         <div class="header">
@@ -89,5 +104,6 @@
       </div>
     </div>
     <script src="day1_word_script.js"></script>
+    <audio id="timer-sound" src="timer_tick.mp3" loop></audio> <audio id="correct-sound" src="correct.mp3"></audio>      <audio id="wrong-sound" src="wrong.mp3"></audio>
   </body>
 </html>
