@@ -1,9 +1,6 @@
 /* ============================================================
    [데이터 설정] 
-   1. studyList: 실제 문제로 출제되는 단어표 (28개)
-   2. extraDistractors: 오답 카드로만 사용되는 보조 데이터
    ============================================================ */
-
 const studyList = [
   { hanzi: '我', pinyin: 'wǒ', ko: '나', cat: 'pronoun' },
   { hanzi: '你', pinyin: 'nǐ', ko: '너', cat: 'pronoun' },
@@ -67,26 +64,24 @@ let timerInterval;
 let timerSound, correctSound, wrongSound;
 
 /* ============================================================
-   ★ [핵심 해결] 효과음 씹힘 방지 전용 함수 ★
-   원본을 건드리지 않고 '복제본'을 만들어 재생합니다.
+   [핵심 함수] 효과음 씹힘 방지 (복제 재생)
    ============================================================ */
 function playEffect(audioElement) {
   if (!audioElement) return;
   const clone = audioElement.cloneNode(true);
   clone.volume = 1;
+  clone.muted = false; // ★ 복제본 무조건 음소거 해제
   clone.play().catch(() => {});
 }
 
 /* ============================================================
    [게임 로직]
    ============================================================ */
-
 function startGame() {
   timerSound = document.getElementById('timer-sound');
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  // ★ 시작 버튼 누를 때 아이폰/안드로이드 확실한 음소거 권한 획득
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
@@ -97,7 +92,13 @@ function startGame() {
           s.pause();
           s.currentTime = 0;
           s.muted = false;
-        }).catch(() => {});
+        }).catch(() => {
+          // ★ 타이머가 영원히 침묵했던 이유 해결! 
+          // 에러가 나도 음소거는 반드시 풀어줍니다.
+          s.muted = false; 
+        });
+      } else {
+        s.muted = false;
       }
     }
   });
@@ -131,8 +132,8 @@ function startTimer() {
     timerDisplay.style.color = 'var(--primary)';
   }
 
-  // 타이머 소리는 복제하지 않고 기존 끄고 켜기 방식 유지 (배경음 역할)
   if (timerSound) {
+    timerSound.muted = false; // ★ 켤 때 한 번 더 강제 음소거 해제
     timerSound.pause();
     timerSound.currentTime = 0;
     timerSound.play().catch(() => {});
@@ -168,7 +169,6 @@ function loadQuestion() {
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
   btns.forEach((b) => {
     b.classList.remove('correct', 'wrong');
-    // ★ [호버 해결] 문제 로드 시 모바일 포커스 강제 해제
     b.blur();
   });
 
@@ -204,7 +204,6 @@ function handleError(msg) {
   isClickable = false;
   if (timerSound) timerSound.pause();
 
-  // ★ 시간 초과 오답음 씹힘 방지
   playEffect(wrongSound);
 
   const qBox = document.querySelector('.question-box');
@@ -224,7 +223,6 @@ function selectAnswer(selectedIndex) {
   isClickable = false;
 
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
-  // ★ [호버 해결] 클릭(터치)하자마자 버튼의 포커스를 해제하여 주황색 잔상 방지
   btns[selectedIndex].blur();
 
   if (timerSound) timerSound.pause();
@@ -234,7 +232,6 @@ function selectAnswer(selectedIndex) {
   const fb = document.getElementById('feedback-msg');
 
   if (isCorrect) {
-    // ★ 정답음 씹힘 방지
     playEffect(correctSound);
 
     score++;
@@ -244,7 +241,6 @@ function selectAnswer(selectedIndex) {
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
-    // ★ 오답음 씹힘 방지
     playEffect(wrongSound);
 
     btns[selectedIndex].classList.add('wrong');
