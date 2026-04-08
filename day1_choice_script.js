@@ -365,6 +365,11 @@ let timerInterval;
 let selectedChunks = [];
 let answerOrder = [];
 
+// 효과음 요소 가져오기
+const timerSound = document.getElementById('timer-sound');
+const correctSound = document.getElementById('correct-sound');
+const wrongSound = document.getElementById('wrong-sound');
+
 function startGame() {
   gameQueue = [];
   ['come', 'listen', 'watch', 'buy'].forEach((verb) => {
@@ -400,64 +405,57 @@ function loadQuestion() {
       card.onclick = () => selectChunk(chunk, card);
       pool.appendChild(card);
     });
-  startTimer();
+
+  startTimer(); // 여기서 타이머 소리도 함께 시작됩니다.
 }
 
 function selectChunk(chunk, cardElement) {
   if (cardElement.classList.contains('used')) return;
 
-  // 1. 아래쪽 대기 카드 비활성화
   cardElement.classList.add('used');
   selectedChunks.push(chunk.h);
 
   const display = document.getElementById('sentence-display');
   const selectedTag = document.createElement('div');
   selectedTag.className = 'selected-card';
-
-  // ★ 데스크탑 사용자를 위한 마우스 커서 설정
   selectedTag.style.cursor = 'pointer';
-
-  // 카드 내용 삽입 (한자 크게, 병음 작게)
   selectedTag.innerHTML = `<div class="hz-text">${chunk.h}</div><div class="py-text">${chunk.p}</div>`;
 
-  // 2. [핵심] 클릭/터치 시 취소 기능 (데스크탑 클릭 완벽 대응)
   selectedTag.onclick = function () {
-    // 배열에서 해당 한자 삭제 (가장 뒤에 있는 것부터 삭제하여 중복 단어 오류 방지)
     for (let i = selectedChunks.length - 1; i >= 0; i--) {
       if (selectedChunks[i] === chunk.h) {
         selectedChunks.splice(i, 1);
         break;
       }
     }
-
-    // 테이블에서 카드 제거
     this.remove();
-
-    // 아래쪽 대기 카드 다시 활성화
     cardElement.classList.remove('used');
-
-    // 정답/오답 메시지 초기화
     const fb = document.getElementById('feedback-msg');
     if (fb) fb.innerText = '';
   };
 
   display.appendChild(selectedTag);
 
-  // 3. 정답 체크 (모든 카드가 다 올라갔을 때만)
   if (selectedChunks.length === answerOrder.length) {
-    // 데스크탑에서 너무 빨리 체크되는 것을 방지하기 위해 아주 약간의 시차를 둠
     setTimeout(checkAnswer, 100);
   }
 }
 
 function checkAnswer() {
   clearInterval(timerInterval);
+  if (timerSound) timerSound.pause(); // 정답 체크 시 타이머 소리 일시 정지
+
   const isCorrect =
     JSON.stringify(selectedChunks) === JSON.stringify(answerOrder);
   const fb = document.getElementById('feedback-msg');
   const display = document.getElementById('sentence-display');
 
   if (isCorrect) {
+    // [정답] 딩동댕 소리 재생
+    if (correctSound) {
+      correctSound.currentTime = 0;
+      correctSound.play();
+    }
     score++;
     fb.innerText = '딩동댕! 잘하셨어요! 👏';
     fb.style.color = 'var(--correct)';
@@ -465,6 +463,11 @@ function checkAnswer() {
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
+    // [오답] 땡 소리 재생
+    if (wrongSound) {
+      wrongSound.currentTime = 0;
+      wrongSound.play();
+    }
     fb.innerText = '틀렸어요! 다시 맞춰보세요 🧐';
     fb.style.color = 'var(--wrong)';
     display.classList.add('shake');
@@ -487,6 +490,12 @@ function resetCurrentSentence() {
 
 function startTimer() {
   clearInterval(timerInterval);
+  // 타이머 소리 재생
+  if (timerSound) {
+    timerSound.currentTime = 0;
+    timerSound.play().catch((e) => console.log('소리 대기 중'));
+  }
+
   timeLeft = 20;
   const timerDisplay = document.getElementById('timer');
   timerDisplay.innerText = timeLeft;
@@ -503,6 +512,12 @@ function startTimer() {
 }
 
 function handleTimeOut() {
+  if (timerSound) timerSound.pause();
+  // [시간초과] 땡 소리 재생
+  if (wrongSound) {
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+  }
   const display = document.getElementById('sentence-display');
   document.getElementById('feedback-msg').innerText =
     '시간 초과! 다시 도전! ⏰';
@@ -516,9 +531,10 @@ function handleTimeOut() {
 
 function endGame() {
   clearInterval(timerInterval);
+  if (timerSound) timerSound.pause();
   document.getElementById('game-board').style.display = 'none';
   const result = document.getElementById('result-screen');
   result.style.display = 'flex';
   document.getElementById('final-score').innerHTML =
-    `오늘 배운 문장을 모두 마스터 했습니다.</b>(이 화면을 캡쳐해서 카톡방에 올려주세요!)`;
+    `오늘 배운 문장을 모두 마스터 했습니다.<br>(이 화면을 캡쳐해서 카톡방에 올려주세요!)`;
 }
