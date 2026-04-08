@@ -66,14 +66,21 @@ let timerInterval;
 
 let timerSound, correctSound, wrongSound;
 
+/* ============================================================
+   [게임 로직]
+   ============================================================ */
+
 function startGame() {
+  // ★ [사운드 해결] 모든 소리 요소를 변수에 할당하고 강제로 권한 획득
   timerSound = document.getElementById('timer-sound');
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  [timerSound, correctSound, wrongSound].forEach((s) => {
+  const unlockSounds = [timerSound, correctSound, wrongSound];
+  unlockSounds.forEach((s) => {
     if (s) {
       s.muted = false;
+      // 재생 직후 일시정지하여 모바일 브라우저의 '사용자 Gesture' 권한을 확실히 따냄
       s.play()
         .then(() => {
           s.pause();
@@ -112,6 +119,7 @@ function startTimer() {
     timerDisplay.style.color = 'var(--primary)';
   }
 
+  // 모바일 환경을 위해 play()를 명시적으로 호출
   if (timerSound) {
     timerSound.currentTime = 0;
     timerSound.play().catch(() => {});
@@ -145,7 +153,10 @@ function loadQuestion() {
   document.getElementById('feedback-msg').innerText = '';
 
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
-  btns.forEach((b) => b.classList.remove('correct', 'wrong'));
+  btns.forEach((b) => {
+    b.classList.remove('correct', 'wrong');
+    b.blur(); // ★ [호버 해결] 이전 문제에서 남은 포커스 강제 해제
+  });
 
   let correctWord = gameWords[currentIdx];
   let potentialDistractors = [...studyList, ...extraDistractors].filter(
@@ -179,7 +190,6 @@ function handleError(msg) {
   isClickable = false;
   if (timerSound) timerSound.pause();
 
-  // 시간 초과 시 오답음 재생
   const wSound = document.getElementById('wrong-sound');
   if (wSound) {
     wSound.currentTime = 0;
@@ -202,12 +212,14 @@ function selectAnswer(selectedIndex) {
   if (!isClickable) return;
   isClickable = false;
 
+  const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
+  btns[selectedIndex].blur(); // ★ [호버 해결] 터치하는 순간 포커스 해제
+
   if (timerSound) timerSound.pause();
   document.querySelector('.choices-area').classList.add('disabled');
 
   const isCorrect = selectedIndex === correctIdx;
   const fb = document.getElementById('feedback-msg');
-  const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
 
   if (isCorrect) {
     const cSound = document.getElementById('correct-sound');
@@ -222,7 +234,6 @@ function selectAnswer(selectedIndex) {
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
-    // ★ [핵심 수정] 오답 카드를 눌렀을 때 즉시 오답 소리 재생 ★
     const wSound = document.getElementById('wrong-sound');
     if (wSound) {
       wSound.currentTime = 0;
@@ -233,7 +244,6 @@ function selectAnswer(selectedIndex) {
     fb.innerText = '아쉬워요! 다시 한번 생각해보세요 🧐';
     fb.style.color = 'var(--wrong)';
 
-    // 틀렸을 때 인덱스 증가 없이 다시 풀기
     setTimeout(loadQuestion, 1500);
   }
 }
