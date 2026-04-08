@@ -1,7 +1,5 @@
 /* ============================================================
-   [데이터 설정] 
-   1. studyList: 실제 문제로 출제되는 단어표 (28개)
-   2. extraDistractors: 오답 카드로만 사용되는 보조 데이터
+   [데이터 설정]
    ============================================================ */
 
 const studyList = [
@@ -67,27 +65,27 @@ let timerInterval;
 let timerSound, correctSound, wrongSound;
 
 /* ============================================================
-   [핵심 수정] startGame (소리 잠금 해제 강화)
+   [게임 로직]
    ============================================================ */
+
 function startGame() {
   timerSound = document.getElementById('timer-sound');
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  // ★ 시작 버튼을 누를 때 볼륨을 0으로 만들어 '땡' 소리가 나는 것을 방지하고 권한만 획득
+  // ★ [사운드 해결] 확실한 음소거(muted) 방식으로 아이폰/안드로이드 소음 원천 차단
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
-      const originalVol = s.volume;
-      s.volume = 0;
-      s.muted = false;
-      s.play()
-        .then(() => {
+      s.muted = true; // 무조건 음소거
+      const p = s.play();
+      if (p !== undefined) {
+        p.then(() => {
           s.pause();
           s.currentTime = 0;
-          s.volume = originalVol; // 실제 재생 시 소리가 나도록 볼륨 복구
-        })
-        .catch(() => {});
+          s.muted = false; // 권한 획득 후 음소거 해제
+        }).catch(() => {});
+      }
     }
   });
 
@@ -100,8 +98,8 @@ function startGame() {
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
 
-  // 화면 전환 후 타이머 요소가 준비될 시간을 줌
-  setTimeout(loadQuestion, 150);
+  // 화면이 확실하게 그려진 뒤 시작
+  setTimeout(loadQuestion, 200);
 }
 
 function showHint() {
@@ -121,7 +119,9 @@ function startTimer() {
     timerDisplay.style.color = 'var(--primary)';
   }
 
+  // 모바일 재생 안정화 (이전 잔여 버퍼 비우기)
   if (timerSound) {
+    timerSound.pause();
     timerSound.currentTime = 0;
     timerSound.play().catch(() => {});
   }
@@ -156,7 +156,6 @@ function loadQuestion() {
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
   btns.forEach((b) => {
     b.classList.remove('correct', 'wrong');
-    // ★ [호버 해결] 문제 로드 시 모든 버튼의 포커스를 해제하여 잔상 방지
     b.blur();
   });
 
@@ -192,10 +191,10 @@ function handleError(msg) {
   isClickable = false;
   if (timerSound) timerSound.pause();
 
-  const wSound = document.getElementById('wrong-sound');
-  if (wSound) {
-    wSound.currentTime = 0;
-    wSound.play().catch(() => {});
+  if (wrongSound) {
+    wrongSound.pause();
+    wrongSound.currentTime = 0;
+    wrongSound.play().catch(() => {});
   }
 
   const qBox = document.querySelector('.question-box');
@@ -210,15 +209,11 @@ function handleError(msg) {
   }, 1200);
 }
 
-/* ============================================================
-   [핵심 수정] selectAnswer (호버 잔상 해결)
-   ============================================================ */
 function selectAnswer(selectedIndex) {
   if (!isClickable) return;
   isClickable = false;
 
   const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
-  // ★ [호버 해결] 클릭(터치)하자마자 버튼의 포커스를 해제하여 주황색 잔상 방지
   btns[selectedIndex].blur();
 
   if (timerSound) timerSound.pause();
@@ -228,10 +223,11 @@ function selectAnswer(selectedIndex) {
   const fb = document.getElementById('feedback-msg');
 
   if (isCorrect) {
-    const cSound = document.getElementById('correct-sound');
-    if (cSound) {
-      cSound.currentTime = 0;
-      cSound.play().catch(() => {});
+    // 모바일 재생 안정화: pause -> currentTime -> play
+    if (correctSound) {
+      correctSound.pause();
+      correctSound.currentTime = 0;
+      correctSound.play().catch(() => {});
     }
     score++;
     btns[selectedIndex].classList.add('correct');
@@ -240,10 +236,10 @@ function selectAnswer(selectedIndex) {
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
-    const wSound = document.getElementById('wrong-sound');
-    if (wSound) {
-      wSound.currentTime = 0;
-      wSound.play().catch(() => {});
+    if (wrongSound) {
+      wrongSound.pause();
+      wrongSound.currentTime = 0;
+      wrongSound.play().catch(() => {});
     }
 
     btns[selectedIndex].classList.add('wrong');
@@ -260,7 +256,7 @@ function endGame() {
 
   document.getElementById('game-board').style.display = 'none';
   const result = document.getElementById('result-screen');
-  result.style.display = 'flex';
+  if (result) result.style.display = 'flex';
   document.getElementById('final-score').innerHTML =
     `오늘 배운 단어를 모두 마스터 했습니다.</b><br>(이 화면을 캡쳐해서 카톡방에 올려주세요!)`;
 }
