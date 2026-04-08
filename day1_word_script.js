@@ -10,7 +10,7 @@ const studyList = [
   { hanzi: '您', pinyin: 'nín', ko: '당신 (존칭)', cat: 'pronoun' },
   { hanzi: '他', pinyin: 'tā', ko: '그', cat: 'pronoun' },
   { hanzi: '她', pinyin: 'tā', ko: '그녀', cat: 'pronoun' },
-  { hanzi: '我们', pinyin: 'wǒmen', ko: '우리', cat: 'pronoun' },
+  { hanzi: '우리', pinyin: 'wǒmen', ko: '우리', cat: 'pronoun' },
   { hanzi: '你们', pinyin: 'nǐmen', ko: '너희', cat: 'pronoun' },
   { hanzi: '他们', pinyin: 'tāmen', ko: '그들 (남/혼합)', cat: 'pronoun' },
   { hanzi: '她们', pinyin: 'tāmen', ko: '그녀들', cat: 'pronoun' },
@@ -34,7 +34,6 @@ const studyList = [
   { hanzi: '煎饼', pinyin: 'jiānbing', ko: '젠빙 (중국식 전병)', cat: 'food' },
 ];
 
-// 오답 전용 카드 (문제로는 나오지 않음)
 const extraDistractors = [
   { ko: '미국', cat: 'country' },
   { ko: '일본', cat: 'country' },
@@ -69,8 +68,12 @@ let correctIdx = 0;
 let timeLeft = 20;
 let timerInterval;
 
+// [추가] 효과음 요소 참조
+const timerSound = document.getElementById('timer-sound');
+const correctSound = document.getElementById('correct-sound');
+const wrongSound = document.getElementById('wrong-sound');
+
 function startGame() {
-  // 28개 단어표에서 랜덤으로 20개 추출하여 문제 리스트 생성
   gameWords = [...studyList]
     .sort(() => Math.random() - 0.5)
     .slice(0, TOTAL_QUESTIONS);
@@ -85,6 +88,13 @@ function showHint() {
 
 function startTimer() {
   clearInterval(timerInterval);
+
+  // [추가] 타이머 소리 재생
+  if (timerSound) {
+    timerSound.currentTime = 0;
+    timerSound.play().catch((e) => console.log('소리 재생 대기'));
+  }
+
   timeLeft = 20;
   const timerDisplay = document.getElementById('timer');
   timerDisplay.innerText = timeLeft;
@@ -114,7 +124,6 @@ function loadQuestion() {
 
   let correctWord = gameWords[currentIdx];
 
-  // 오답 후보들 (단어표의 다른 단어들 + 오답 전용 단어들 중 같은 카테고리인 것들)
   let potentialDistractors = [...studyList, ...extraDistractors].filter(
     (w) => w.cat === correctWord.cat && w.ko !== correctWord.ko,
   );
@@ -122,14 +131,12 @@ function loadQuestion() {
   potentialDistractors.sort(() => Math.random() - 0.5);
 
   let options = [correctWord];
-  // 같은 카테고리에서 오답 3개 채우기
   for (let i = 0; i < 3; i++) {
     if (potentialDistractors[i]) {
       options.push(potentialDistractors[i]);
     }
   }
 
-  // 혹시라도 카테고리 내 단어가 부족하면 아무 단어나 채움
   while (options.length < 4) {
     let rand = studyList[Math.floor(Math.random() * studyList.length)];
     if (!options.find((o) => o.ko === rand.ko)) options.push(rand);
@@ -150,6 +157,14 @@ function loadQuestion() {
 
 function handleError(msg) {
   isClickable = false;
+
+  // [추가] 시간 초과 시 오답 소리 및 타이머 정지
+  if (timerSound) timerSound.pause();
+  if (wrongSound) {
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+  }
+
   const qBox = document.querySelector('.question-box');
   const fb = document.getElementById('feedback-msg');
   fb.innerText = msg;
@@ -160,33 +175,64 @@ function handleError(msg) {
     qBox.classList.remove('shake');
     isClickable = true;
     fb.innerText = '';
-    startTimer(); // 맞힐 때까지 시간 리셋
+    startTimer();
   }, 1200);
 }
 
-function selectAnswer(idx) {
+function selectAnswer(selectedIndex) {
   if (!isClickable) return;
   isClickable = false;
-  clearInterval(timerInterval);
 
-  if (idx === correctIdx) {
+  // [추가] 정답 확인 로직 및 타이머 정지
+  if (timerSound) timerSound.pause();
+
+  const isCorrect = selectedIndex === correctIdx;
+  const fb = document.getElementById('feedback-msg');
+  const btns = [0, 1, 2, 3].map((i) => document.getElementById(`btn-${i}`));
+
+  if (isCorrect) {
+    // [추가] 정답 소리
+    if (correctSound) {
+      correctSound.currentTime = 0;
+      correctSound.play();
+    }
     score++;
-    document.getElementById(`btn-${idx}`).classList.add('correct');
-    document.getElementById('feedback-msg').innerText = '딩동댕! 👏';
-    document.getElementById('feedback-msg').style.color = 'var(--correct)';
+    btns[selectedIndex].classList.add('correct');
+    fb.innerText = '딩동댕! 정답입니다 👏';
+    fb.style.color = 'var(--correct)';
+
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
-    document.getElementById(`btn-${idx}`).classList.add('wrong');
-    handleError('틀렸어요! 다시 생각해보세요 🧐');
+    // [추가] 오답 소리
+    if (wrongSound) {
+      wrongSound.currentTime = 0;
+      wrongSound.play();
+    }
+    btns[selectedIndex].classList.add('wrong');
+    btns[correctIdx].classList.add('correct');
+    fb.innerText = '아쉬워요! 다시 한 번 생각해보세요 🧐';
+    fb.style.color = 'var(--wrong)';
+
+    // 오답 시 1.5초 후 다시 기회 부여 (startTimer 재호출)
+    setTimeout(() => {
+      btns[selectedIndex].classList.remove('wrong');
+      btns[correctIdx].classList.remove('correct');
+      fb.innerText = '';
+      isClickable = true;
+      startTimer();
+    }, 1500);
   }
 }
 
 function endGame() {
   clearInterval(timerInterval);
+  // [추가] 게임 종료 시 타이머 소리 완전 정지
+  if (timerSound) timerSound.pause();
+
   document.getElementById('game-board').style.display = 'none';
   const result = document.getElementById('result-screen');
   result.style.display = 'flex';
   document.getElementById('final-score').innerHTML =
-    `오늘 배운 단어를 모두 마스터 했습니다.</b>(이 화면을 캡쳐해서 카톡방에 올려주세요!)`;
+    `오늘 배운 단어를 모두 마스터 했습니다.</b><br>(이 화면을 캡쳐해서 카톡방에 올려주세요!)`;
 }
