@@ -188,5 +188,5 @@ function endGame() {
   const result = document.getElementById('result-screen');
   result.style.display = 'flex';
   document.getElementById('final-score').innerHTML =
-    `부평 그랑힐스 단어 마스터!<br>총 <b>${TOTAL_QUESTIONS}</b>문제를 모두 맞혔습니다!`;
+    `오늘 배운 단어를 모두 마스터 했습니다.</b>(이 화면을 캡쳐해서 카톡방에 올려주세요!)`;
 }
