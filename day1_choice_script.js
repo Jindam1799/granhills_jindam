@@ -356,6 +356,7 @@ const rawSentenceData = {
     },
   ],
 };
+
 let gameQueue = [];
 let currentIdx = 0;
 let score = 0;
@@ -364,29 +365,35 @@ let timerInterval;
 let selectedChunks = [];
 let answerOrder = [];
 
-// 효과음 변수 선언
 let timerSound, correctSound, wrongSound;
 
+/* ============================================================
+   [핵심 함수] startGame
+   ============================================================ */
 function startGame() {
-  // 1. 소리 요소 찾기 및 잠금 해제 (시작 버튼 클릭 시 실행)
+  // 1. 소리 요소 찾기
   timerSound = document.getElementById('timer-sound');
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
+  // 2. 모바일/브라우저 소리 권한 해제 (무음으로 깨우기)
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
+      const originalVol = s.volume;
+      s.volume = 0;
       s.muted = false;
       s.play()
         .then(() => {
           s.pause();
           s.currentTime = 0;
+          s.volume = originalVol;
         })
-        .catch((e) => console.log('소리 깨우기 대기:', e));
+        .catch(() => {});
     }
   });
 
-  // 2. 문제 큐 생성
+  // 3. 문제 큐 생성
   gameQueue = [];
   ['come', 'listen', 'watch', 'buy'].forEach((verb) => {
     if (rawSentenceData[verb]) {
@@ -399,12 +406,13 @@ function startGame() {
   currentIdx = 0;
   score = 0;
 
-  // 3. 화면 전환
+  // 4. 화면 전환
+  document.getElementById('ko-sentence').innerText = '준비...';
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
 
-  // 4. 첫 문제 로드
-  setTimeout(loadQuestion, 100);
+  // 5. [수정] 화면 렌더링 후 타이머가 확실히 동작하도록 미세한 지연 후 시작
+  setTimeout(loadQuestion, 150);
 }
 
 function loadQuestion() {
@@ -415,6 +423,7 @@ function loadQuestion() {
   selectedChunks = [];
   document.getElementById('sentence-display').innerHTML = '';
   document.getElementById('feedback-msg').innerText = '';
+
   const data = gameQueue[currentIdx];
   document.getElementById('ko-sentence').innerText = data.ko;
   answerOrder = data.chunks.map((c) => c.h);
@@ -431,6 +440,7 @@ function loadQuestion() {
       pool.appendChild(card);
     });
 
+  // 타이머 시작
   startTimer();
 }
 
@@ -468,7 +478,7 @@ function selectChunk(chunk, cardElement) {
 
 function checkAnswer() {
   clearInterval(timerInterval);
-  if (timerSound) timerSound.pause(); // 체크 시 타이머 소리 중지
+  if (timerSound) timerSound.pause();
 
   const isCorrect =
     JSON.stringify(selectedChunks) === JSON.stringify(answerOrder);
@@ -476,7 +486,6 @@ function checkAnswer() {
   const display = document.getElementById('sentence-display');
 
   if (isCorrect) {
-    // [정답 소리]
     if (correctSound) {
       correctSound.currentTime = 0;
       correctSound.play().catch(() => {});
@@ -488,7 +497,6 @@ function checkAnswer() {
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
-    // [오답 소리]
     if (wrongSound) {
       wrongSound.currentTime = 0;
       wrongSound.play().catch(() => {});
@@ -513,24 +521,39 @@ function resetCurrentSentence() {
   startTimer();
 }
 
+/* ============================================================
+   [핵심 함수] startTimer (보강됨)
+   ============================================================ */
 function startTimer() {
-  clearInterval(timerInterval);
+  // 기존 타이머 청소
+  if (timerInterval) clearInterval(timerInterval);
+
+  timeLeft = 20;
+
+  // [수정] 타이머 숫자를 화면에 즉시 띄우고 색상을 초기화
+  const timerDisplay = document.getElementById('timer');
+  if (timerDisplay) {
+    timerDisplay.innerText = timeLeft;
+    timerDisplay.style.color = 'var(--primary)';
+  }
 
   // 타이머 소리 재생
   if (timerSound) {
     timerSound.currentTime = 0;
-    timerSound.play().catch((e) => console.log('타이머 재생 대기:', e));
+    timerSound.play().catch(() => {});
   }
 
-  timeLeft = 20;
-  const timerDisplay = document.getElementById('timer');
-  timerDisplay.innerText = timeLeft;
-  timerDisplay.style.color = 'var(--primary)';
-
+  // 카운트다운 인터벌 시작
   timerInterval = setInterval(() => {
     timeLeft--;
-    timerDisplay.innerText = timeLeft;
-    if (timeLeft <= 5) timerDisplay.style.color = 'var(--wrong)';
+
+    // 매 초마다 숫자 UI 갱신 (요소 확인 필수)
+    const currentDisplay = document.getElementById('timer');
+    if (currentDisplay) {
+      currentDisplay.innerText = timeLeft;
+      if (timeLeft <= 5) currentDisplay.style.color = 'var(--wrong)';
+    }
+
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       handleTimeOut();
@@ -540,7 +563,6 @@ function startTimer() {
 
 function handleTimeOut() {
   if (timerSound) timerSound.pause();
-  // [시간초과 오답 소리]
   if (wrongSound) {
     wrongSound.currentTime = 0;
     wrongSound.play().catch(() => {});
