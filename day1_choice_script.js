@@ -205,7 +205,7 @@ const rawSentenceData = {
       ko: '그는 안 봅니까?',
       chunks: [
         { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
+        { h: '不', p: 'bú' },
         { h: '看', p: 'kàn' },
         { h: '吗', p: 'ma' },
       ],
@@ -231,7 +231,7 @@ const rawSentenceData = {
       ko: '그는 영화를 안 봅니다.',
       chunks: [
         { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
+        { h: '不', p: 'bú' },
         { h: '看', p: 'kàn' },
         { h: '电影', p: 'diànyǐng' },
       ],
@@ -249,7 +249,7 @@ const rawSentenceData = {
       ko: '그는 영화를 안 봅니까?',
       chunks: [
         { h: '他', p: 'tā' },
-        { h: '不', p: 'bù' },
+        { h: '不', p: 'bú' },
         { h: '看', p: 'kàn' },
         { h: '电影', p: 'diànyǐng' },
         { h: '吗', p: 'ma' },
