@@ -356,7 +356,6 @@ const rawSentenceData = {
     },
   ],
 };
-
 let gameQueue = [];
 let currentIdx = 0;
 let score = 0;
@@ -365,21 +364,47 @@ let timerInterval;
 let selectedChunks = [];
 let answerOrder = [];
 
-// 효과음 요소 가져오기
-const timerSound = document.getElementById('timer-sound');
-const correctSound = document.getElementById('correct-sound');
-const wrongSound = document.getElementById('wrong-sound');
+// 효과음 변수 선언
+let timerSound, correctSound, wrongSound;
 
 function startGame() {
+  // 1. 소리 요소 찾기 및 잠금 해제 (시작 버튼 클릭 시 실행)
+  timerSound = document.getElementById('timer-sound');
+  correctSound = document.getElementById('correct-sound');
+  wrongSound = document.getElementById('wrong-sound');
+
+  const unlockSounds = [timerSound, correctSound, wrongSound];
+  unlockSounds.forEach((s) => {
+    if (s) {
+      s.muted = false;
+      s.play()
+        .then(() => {
+          s.pause();
+          s.currentTime = 0;
+        })
+        .catch((e) => console.log('소리 깨우기 대기:', e));
+    }
+  });
+
+  // 2. 문제 큐 생성
   gameQueue = [];
   ['come', 'listen', 'watch', 'buy'].forEach((verb) => {
-    let shuffled = [...rawSentenceData[verb]].sort(() => 0.5 - Math.random());
-    gameQueue.push(...shuffled.slice(0, 5));
+    if (rawSentenceData[verb]) {
+      let shuffled = [...rawSentenceData[verb]].sort(() => 0.5 - Math.random());
+      gameQueue.push(...shuffled.slice(0, 5));
+    }
   });
   gameQueue.sort(() => 0.5 - Math.random());
+
+  currentIdx = 0;
+  score = 0;
+
+  // 3. 화면 전환
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
-  loadQuestion();
+
+  // 4. 첫 문제 로드
+  setTimeout(loadQuestion, 100);
 }
 
 function loadQuestion() {
@@ -406,7 +431,7 @@ function loadQuestion() {
       pool.appendChild(card);
     });
 
-  startTimer(); // 여기서 타이머 소리도 함께 시작됩니다.
+  startTimer();
 }
 
 function selectChunk(chunk, cardElement) {
@@ -443,7 +468,7 @@ function selectChunk(chunk, cardElement) {
 
 function checkAnswer() {
   clearInterval(timerInterval);
-  if (timerSound) timerSound.pause(); // 정답 체크 시 타이머 소리 일시 정지
+  if (timerSound) timerSound.pause(); // 체크 시 타이머 소리 중지
 
   const isCorrect =
     JSON.stringify(selectedChunks) === JSON.stringify(answerOrder);
@@ -451,10 +476,10 @@ function checkAnswer() {
   const display = document.getElementById('sentence-display');
 
   if (isCorrect) {
-    // [정답] 딩동댕 소리 재생
+    // [정답 소리]
     if (correctSound) {
       correctSound.currentTime = 0;
-      correctSound.play();
+      correctSound.play().catch(() => {});
     }
     score++;
     fb.innerText = '딩동댕! 잘하셨어요! 👏';
@@ -463,10 +488,10 @@ function checkAnswer() {
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
-    // [오답] 땡 소리 재생
+    // [오답 소리]
     if (wrongSound) {
       wrongSound.currentTime = 0;
-      wrongSound.play();
+      wrongSound.play().catch(() => {});
     }
     fb.innerText = '틀렸어요! 다시 맞춰보세요 🧐';
     fb.style.color = 'var(--wrong)';
@@ -490,16 +515,18 @@ function resetCurrentSentence() {
 
 function startTimer() {
   clearInterval(timerInterval);
+
   // 타이머 소리 재생
   if (timerSound) {
     timerSound.currentTime = 0;
-    timerSound.play().catch((e) => console.log('소리 대기 중'));
+    timerSound.play().catch((e) => console.log('타이머 재생 대기:', e));
   }
 
   timeLeft = 20;
   const timerDisplay = document.getElementById('timer');
   timerDisplay.innerText = timeLeft;
   timerDisplay.style.color = 'var(--primary)';
+
   timerInterval = setInterval(() => {
     timeLeft--;
     timerDisplay.innerText = timeLeft;
@@ -513,10 +540,10 @@ function startTimer() {
 
 function handleTimeOut() {
   if (timerSound) timerSound.pause();
-  // [시간초과] 땡 소리 재생
+  // [시간초과 오답 소리]
   if (wrongSound) {
     wrongSound.currentTime = 0;
-    wrongSound.play();
+    wrongSound.play().catch(() => {});
   }
   const display = document.getElementById('sentence-display');
   document.getElementById('feedback-msg').innerText =
