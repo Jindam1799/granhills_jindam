@@ -1,5 +1,5 @@
 /* ============================================================
-   [데이터 설정]
+   [데이터 설정] 
    ============================================================ */
 const rawSentenceData = {
   come: [
@@ -63,6 +63,18 @@ let answerOrder = [];
 let timerSound, correctSound, wrongSound;
 
 /* ============================================================
+   ★ [핵심 해결] 효과음 씹힘 방지 전용 함수 ★
+   원본을 건드리지 않고 '복제본'을 만들어 재생합니다.
+   ============================================================ */
+function playEffect(audioElement) {
+  if (!audioElement) return;
+  // 소리 요소를 1회용으로 복제해서 켭니다 (겹침 허용, 끊김 절대 방지)
+  const clone = audioElement.cloneNode(true);
+  clone.volume = 1;
+  clone.play().catch(() => {});
+}
+
+/* ============================================================
    [핵심 함수] startGame
    ============================================================ */
 function startGame() {
@@ -70,17 +82,17 @@ function startGame() {
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  // ★ [사운드 해결] 확실한 음소거(muted)로 아이폰/안드로이드 소음 원천 차단
+  // 모바일 권한 획득용 무음 재생 (단 1회만)
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
-      s.muted = true; // 무조건 음소거
+      s.muted = true;
       let p = s.play();
       if (p !== undefined) {
         p.then(() => {
           s.pause();
           s.currentTime = 0;
-          s.muted = false; // 권한 획득 후 음소거 해제
+          s.muted = false;
         }).catch(() => {});
       }
     }
@@ -102,7 +114,7 @@ function startGame() {
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
 
-  setTimeout(loadQuestion, 200); // 화면 안착 보장
+  setTimeout(loadQuestion, 150);
 }
 
 function loadQuestion() {
@@ -128,7 +140,7 @@ function loadQuestion() {
       card.setAttribute('tabindex', '-1');
       card.innerHTML = `<div class="cn-text">${chunk.h}</div><div class="pinyin-text">${chunk.p}</div>`;
       card.onclick = () => {
-        card.blur(); // 잔상 제거
+        card.blur(); 
         selectChunk(chunk, card);
       };
       pool.appendChild(card);
@@ -140,7 +152,7 @@ function loadQuestion() {
 function selectChunk(chunk, cardElement) {
   if (cardElement.classList.contains('used')) return;
 
-  cardElement.blur(); // 클릭 시 잔상 방지
+  cardElement.blur(); 
   cardElement.classList.add('used');
   selectedChunks.push(chunk.h);
 
@@ -172,6 +184,8 @@ function selectChunk(chunk, cardElement) {
 
 function checkAnswer() {
   clearInterval(timerInterval);
+  
+  // 타이머 소리는 멈춥니다
   if (timerSound) timerSound.pause();
 
   const isCorrect = JSON.stringify(selectedChunks) === JSON.stringify(answerOrder);
@@ -179,12 +193,9 @@ function checkAnswer() {
   const display = document.getElementById('sentence-display');
 
   if (isCorrect) {
-    // 오디오 중첩 방지를 위해 pause & currentTime 초기화
-    if (correctSound) {
-      correctSound.pause();
-      correctSound.currentTime = 0;
-      correctSound.play().catch(() => {});
-    }
+    // ★ 씹힘 방지 함수 적용: 정답음
+    playEffect(correctSound);
+    
     score++;
     fb.innerText = '딩동댕! 잘하셨어요! 👏';
     fb.style.color = 'var(--correct)';
@@ -192,11 +203,9 @@ function checkAnswer() {
     currentIdx++;
     setTimeout(loadQuestion, 1200);
   } else {
-    if (wrongSound) {
-      wrongSound.pause();
-      wrongSound.currentTime = 0;
-      wrongSound.play().catch(() => {});
-    }
+    // ★ 씹힘 방지 함수 적용: 오답음
+    playEffect(wrongSound);
+    
     fb.innerText = '틀렸어요! 다시 맞춰보세요 🧐';
     fb.style.color = 'var(--wrong)';
     display.classList.add('shake');
@@ -220,6 +229,7 @@ function resetCurrentSentence() {
 
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
+
   timeLeft = 20;
 
   const timerDisplay = document.getElementById('timer');
@@ -228,6 +238,7 @@ function startTimer() {
     timerDisplay.style.color = 'var(--primary)';
   }
 
+  // 타이머 소리는 브금(BGM) 성격이므로 기존 방식 유지
   if (timerSound) {
     timerSound.pause();
     timerSound.currentTime = 0;
@@ -236,6 +247,7 @@ function startTimer() {
 
   timerInterval = setInterval(() => {
     timeLeft--;
+
     const currentDisplay = document.getElementById('timer');
     if (currentDisplay) {
       currentDisplay.innerText = timeLeft;
@@ -252,11 +264,8 @@ function startTimer() {
 function handleTimeOut() {
   if (timerSound) timerSound.pause();
   
-  if (wrongSound) {
-    wrongSound.pause();
-    wrongSound.currentTime = 0;
-    wrongSound.play().catch(() => {});
-  }
+  // ★ 씹힘 방지 함수 적용: 시간초과 오답음
+  playEffect(wrongSound);
   
   const display = document.getElementById('sentence-display');
   document.getElementById('feedback-msg').innerText = '시간 초과! 다시 도전! ⏰';
