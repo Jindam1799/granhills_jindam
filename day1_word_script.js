@@ -67,17 +67,23 @@ let timerInterval;
 let timerSound, correctSound, wrongSound;
 
 function startGame() {
+  // 1. 소리 요소 찾기
   timerSound = document.getElementById('timer-sound');
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  [timerSound, correctSound, wrongSound].forEach((s) => {
+  // 2. 사운드 잠금 해제 (무음으로 깨워 블립음 방지)
+  const unlockSounds = [timerSound, correctSound, wrongSound];
+  unlockSounds.forEach((s) => {
     if (s) {
+      const originalVol = s.volume;
+      s.volume = 0;
       s.muted = false;
       s.play()
         .then(() => {
           s.pause();
           s.currentTime = 0;
+          s.volume = originalVol;
         })
         .catch(() => {});
     }
@@ -89,10 +95,12 @@ function startGame() {
   currentIdx = 0;
   score = 0;
 
+  // 3. 화면 전환
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
 
-  setTimeout(loadQuestion, 100);
+  // 4. [수정] 화면 안착을 위해 지연 시간 0.15초로 증설 후 로드
+  setTimeout(loadQuestion, 150);
 }
 
 function showHint() {
@@ -103,23 +111,37 @@ function showHint() {
 }
 
 function startTimer() {
-  clearInterval(timerInterval);
-  if (!timerSound) timerSound = document.getElementById('timer-sound');
+  // 1. 기존 타이머 제거
+  if (timerInterval) clearInterval(timerInterval);
 
   timeLeft = 20;
-  const timerDisplay = document.getElementById('timer');
-  timerDisplay.innerText = timeLeft;
-  timerDisplay.style.color = 'var(--primary)';
 
+  // 2. [수정] 타이머 UI 즉시 업데이트 (매번 요소를 찾아 신뢰도 확보)
+  const timerDisplay = document.getElementById('timer');
+  if (timerDisplay) {
+    timerDisplay.innerText = timeLeft;
+    timerDisplay.style.color = 'var(--primary)';
+  }
+
+  // 3. 타이머 소리 재생
   if (timerSound) {
     timerSound.currentTime = 0;
     timerSound.play().catch(() => {});
   }
 
+  // 4. 카운트다운 시작
   timerInterval = setInterval(() => {
     timeLeft--;
-    timerDisplay.innerText = timeLeft;
-    if (timeLeft <= 5) timerDisplay.style.color = 'var(--wrong)';
+
+    // 매 초마다 숫자 및 색상 갱신
+    const currentTimerDisplay = document.getElementById('timer');
+    if (currentTimerDisplay) {
+      currentTimerDisplay.innerText = timeLeft;
+      if (timeLeft <= 5) {
+        currentTimerDisplay.style.color = 'var(--wrong)';
+      }
+    }
+
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       handleError('시간 초과! ⏰');
@@ -134,6 +156,7 @@ function loadQuestion() {
   }
   isClickable = true;
 
+  // 병음 잔상 제거 (텍스트 비우기)
   const pinyinElem = document.getElementById('q-pinyin');
   pinyinElem.style.visibility = 'hidden';
   pinyinElem.innerText = '';
@@ -171,6 +194,7 @@ function loadQuestion() {
     document.getElementById(`ko-text-${i}`).innerText = options[i].ko;
   }
 
+  // 타이머 실행
   startTimer();
 }
 
@@ -191,7 +215,7 @@ function handleError(msg) {
 
   setTimeout(() => {
     qBox.classList.remove('shake');
-    // currentIdx++; // 다음 문제로 넘어가지 않도록 삭제
+    // 틀려도 다음 문제로 넘어가지 않고 다시 로드
     loadQuestion();
   }, 1200);
 }
@@ -218,7 +242,7 @@ function selectAnswer(selectedIndex) {
     fb.innerText = '딩동댕! 정답입니다 👏';
     fb.style.color = 'var(--correct)';
 
-    currentIdx++; // 정답일 때만 인덱스 증가
+    currentIdx++; // 정답일 때만 다음으로 진행
     setTimeout(loadQuestion, 1200);
   } else {
     if (!wrongSound) wrongSound = document.getElementById('wrong-sound');
@@ -231,8 +255,8 @@ function selectAnswer(selectedIndex) {
     fb.innerText = '아쉬워요! 다시 한번 생각해보세요 🧐';
     fb.style.color = 'var(--wrong)';
 
-    // currentIdx++; // 다음 문제로 넘어가지 않도록 삭제
-    setTimeout(loadQuestion, 1500); // 1.5초 후 같은 문제를 다시 세팅(셔플 포함)
+    // 틀리면 다시 풀기 위해 loadQuestion 호출
+    setTimeout(loadQuestion, 1500);
   }
 }
 
