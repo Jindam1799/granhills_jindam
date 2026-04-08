@@ -375,20 +375,21 @@ function startGame() {
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  // ★ [사운드 해결] 모든 소리 요소를 무음으로 한 번 재생하여 모바일 권한 획득
+  // ★ [사운드 해결] 볼륨 0으로 재생하여 권한만 획득 (시작 시 소음 방지)
   const unlockSounds = [timerSound, correctSound, wrongSound];
   unlockSounds.forEach((s) => {
     if (s) {
       const originalVol = s.volume;
       s.volume = 0;
       s.muted = false;
-      s.play()
-        .then(() => {
+      let p = s.play();
+      if (p !== undefined) {
+        p.then(() => {
           s.pause();
           s.currentTime = 0;
           s.volume = originalVol;
-        })
-        .catch(() => {});
+        }).catch(() => {});
+      }
     }
   });
 
@@ -408,7 +409,6 @@ function startGame() {
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
 
-  // 화면 전환 후 타이머가 확실히 동작하도록 미세 지연 후 로드
   setTimeout(loadQuestion, 150);
 }
 
@@ -432,8 +432,13 @@ function loadQuestion() {
     .forEach((chunk) => {
       const card = document.createElement('div');
       card.className = 'chunk-card';
+      // [호버 해결] 탭 인덱스를 주어 포커스 제어 가능하게 함
+      card.setAttribute('tabindex', '-1');
       card.innerHTML = `<div class="cn-text">${chunk.h}</div><div class="pinyin-text">${chunk.p}</div>`;
-      card.onclick = () => selectChunk(chunk, card);
+      card.onclick = () => {
+        card.blur(); // ★ 클릭 즉시 포커스 해제 (잔상 방지)
+        selectChunk(chunk, card);
+      };
       pool.appendChild(card);
     });
 
@@ -442,9 +447,6 @@ function loadQuestion() {
 
 function selectChunk(chunk, cardElement) {
   if (cardElement.classList.contains('used')) return;
-
-  // ★ [호버 해결] 터치하는 순간 포커스 해제하여 모바일 잔상 방지
-  cardElement.blur();
 
   cardElement.classList.add('used');
   selectedChunks.push(chunk.h);
