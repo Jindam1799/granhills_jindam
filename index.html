@@ -8,12 +8,11 @@
   </head>
   <body>
     <div id="intro-overlay" onclick="startLobby()">
-      <video id="intro-video" autoplay muted playsinline>
+      <video id="intro-video" autoplay muted playsinline loop>
         <source src="intro.mp4" type="video/mp4" />
         영상을 재생할 수 없습니다.
       </video>
-      <div class="skip-msg">화면을 클릭하면 시작합니다</div>
-    </div>
+      </div>
 
     <div class="lobby-container" id="main-lobby" style="display: none">
       <div class="apt-tag">GRAN HILLS GROUP STUDY</div>
@@ -54,6 +53,7 @@
       const introVideo = document.getElementById('intro-video');
       const mainLobby = document.getElementById('main-lobby');
 
+      // 오직 클릭했을 때만 실행되는 함수
       function startLobby() {
         if (!introOverlay) return;
 
@@ -63,20 +63,15 @@
         setTimeout(() => {
           // 2. 인트로 완전히 숨기기
           introOverlay.style.display = 'none';
-          // 3. 꽁꽁 숨겨뒀던 로비 상자 열기!
+          // 3. 로비 화면 표시
           if (mainLobby) mainLobby.style.display = 'flex';
 
           // 4. 영상 정지
           if (introVideo) introVideo.pause();
-        }, 800); // 0.8초간의 투명해지는 애니메이션 후 실행
+        }, 800);
       }
 
-      // 영상이 자동으로 끝까지 재생되어도 로비로 이동
-      if (introVideo) {
-        introVideo.onended = function () {
-          startLobby();
-        };
-      }
+      // 이전 코드에 있었을 수 있는 'onended' (자동 넘어가기) 로직은 완전히 삭제되었습니다.
     </script>
   </body>
 </html>
