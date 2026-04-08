@@ -462,3 +462,63 @@ body::after {
 .selected-card {
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* 문장 짤림 방지 및 모바일 최적화 */
+.intro-text,
+.voice-instruction {
+  word-break: keep-all; /* 단어 단위로 줄바꿈 (강력 추천) */
+  overflow-wrap: break-word;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.voice-instruction {
+  font-size: 1.1rem;
+  background: #fff5f0;
+  padding: 12px 15px; /* 여백을 조금 더 시원하게 */
+  border-radius: 15px;
+  color: #444;
+  margin-top: 15px;
+  border: 1px solid #ffe8d9;
+  display: inline-block; /* 박스가 글자 크기에 맞춰지게 */
+  width: 90%; /* 화면 너비의 90%만 차지하여 여백 확보 */
+}
+
+/* 폭이 아주 좁은 스마트폰 (360px 이하) 대응 */
+@media screen and (max-width: 360px) {
+  .intro-text {
+    font-size: 1.05rem !important; /* 폰트를 아주 살짝 줄여 한 줄 유지 */
+  }
+  .voice-instruction {
+    font-size: 0.95rem !important;
+    padding: 10px !important;
+  }
+}
+
+/* [Step 1 병음 힌트 빅폰트 설정] */
+#q-pinyin {
+  /* ★ 기존보다 훨씬 크게 (1.8rem = 약 28~30px) ★ */
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+
+  /* 메인 오렌지 색상으로 강조하여 눈에 띄게 함 */
+  color: var(--primary) !important;
+
+  /* 약간의 그림자를 주어 가독성 향상 */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+
+  /* 아래쪽 한자와 너무 붙지 않게 여백 조정 */
+  margin-bottom: 10px;
+  display: block;
+
+  /* 부드럽게 나타나는 효과 */
+  transition: all 0.3s ease;
+}
+
+/* 아주 작은 모바일 화면에서도 글자가 깨지지 않도록 미세 조정 */
+@media screen and (max-width: 360px) {
+  #q-pinyin {
+    font-size: 1.5rem !important;
+  }
+}
