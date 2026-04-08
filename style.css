@@ -409,39 +409,41 @@ body::after {
   transition: transform 0.1s;
 }
 
-/* [모바일 전용: Step 2 테이블 카드 최적화] */
-@media screen and (max-width: 480px) {
-  /* 1. 테이블(상단 박스) 여백을 줄여 공간 확보 */
-  .sentence-display {
-    padding: 10px 5px !important;
-    gap: 8px !important; /* 카드 사이 간격 좁힘 */
-    min-height: 80px !important;
-  }
+/* [Step 2 테이블 카드 면적 최적화] */
 
-  /* 2. 테이블 위에 올라간 카드의 크기 조절 */
-  .selected-card {
-    padding: 8px 12px !important; /* 안쪽 여백 축소 */
-    min-width: 65px !important; /* 최소 너비 축소 */
-    border-radius: 12px !important;
-  }
+/* 1. 카드가 놓이는 테이블 영역 간격 좁힘 */
+.sentence-display {
+  min-height: 100px;
+  padding: 10px !important; /* 테이블 자체 여백 축소 */
+  gap: 5px !important; /* 카드와 카드 사이 간격을 15px -> 5px로 대폭 축소 */
+  display: flex;
+  flex-wrap: nowrap; /* 최대한 한 줄에 배치 시도 (넘치면 스크롤) */
+  overflow-x: auto; /* 혹시 너무 길면 옆으로 밀어서 볼 수 있게 함 */
+  justify-content: center;
+  align-items: center;
+}
 
-  /* 3. 테이블 위 한자/병음 크기 미세 조정 (가로 정렬 우선) */
-  .selected-card .hz-text {
-    font-size: 1.8rem !important; /* 2.5rem에서 1.8rem으로 최적화 */
-  }
+/* 2. 테이블 위에 올라간 카드 (면적 최소화) */
+.selected-card {
+  padding: 5px 8px !important; /* 안쪽 여백을 최소한으로 줄임 (위아래 5, 좌우 8) */
+  min-width: auto !important; /* 100px 고정 너비 해제! 글자 크기에 딱 맞게 */
+  border-radius: 10px !important; /* 면적이 작아지므로 모서리도 살짝만 */
+  flex-shrink: 0; /* 글자가 찌그러지지 않게 보호 */
+}
 
-  .selected-card .py-text {
-    font-size: 0.85rem !important;
-    margin-top: 2px !important;
-  }
+/* 3. 대기 중인 카드 (아래쪽 덩어리들) 면적도 함께 조절 */
+.chunk-card {
+  padding: 10px 12px !important; /* 대기 카드도 너무 크지 않게 조절 */
+  min-width: auto !important; /* 너비 고정 해제 */
+  margin: 2px;
+}
 
-  /* 4. 아래쪽 대기 카드들도 모바일에선 살짝 슬림하게 */
-  .chunk-card {
-    padding: 12px 15px !important;
-    min-width: 80px !important;
-  }
-
-  .chunk-card .cn-text {
-    font-size: 1.6rem !important;
-  }
+/* ★ 글자 크기는 사용자님 요청대로 절대 고정 ★ */
+.selected-card .hz-text {
+  font-size: 2.5rem !important;
+  line-height: 1; /* 글자 위아래 공간 제거 */
+}
+.selected-card .py-text {
+  font-size: 0.9rem !important; /* 병음은 한 줄 유지를 위해 살짝만 조정 */
+  margin-top: 0px !important;
 }
