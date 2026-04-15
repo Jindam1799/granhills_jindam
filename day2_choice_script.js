@@ -4,7 +4,7 @@
 const rawSentenceData = {
   dialogue1: [
     {
-      ko: '쟤 누구야?',
+      ko: '그는 누구예요?',
       chunks: [
         { h: '他', p: 'tā' },
         { h: '是', p: 'shì' },
@@ -12,7 +12,7 @@ const rawSentenceData = {
       ],
     },
     {
-      ko: '쟤 내 남자친구야.',
+      ko: '그는 제 배우자(남편/아내)예요.',
       chunks: [
         { h: '他', p: 'tā' },
         { h: '是', p: 'shì' },
@@ -22,7 +22,7 @@ const rawSentenceData = {
       ],
     },
     {
-      ko: '와, 잘생겼다!',
+      ko: '와, 잘생겼네요!',
       chunks: [
         { h: '哇', p: 'wā' },
         { h: '很', p: 'hěn' },
@@ -30,7 +30,7 @@ const rawSentenceData = {
       ],
     },
     {
-      ko: '고마워.',
+      ko: '감사해요.',
       chunks: [{ h: '谢谢', p: 'xièxie' }],
     },
   ],
