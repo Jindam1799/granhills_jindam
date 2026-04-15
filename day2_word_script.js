@@ -13,7 +13,7 @@ const studyList = [
   { hanzi: '那', pinyin: 'nà', ko: '저, 그 (저것)', cat: 'pronoun' },
   { hanzi: '手机', pinyin: 'shǒujī', ko: '휴대폰', cat: 'object' },
   { hanzi: '呢', pinyin: 'ne', ko: '~은요? (의문)', cat: 'grammar' },
-  { hanzi: ' know', pinyin: 'zhīdào', ko: '알다', cat: 'verb' },
+  { hanzi: '知道', pinyin: 'zhīdào', ko: '알다', cat: 'verb' },
   { hanzi: '十四', pinyin: 'shísì', ko: '14', cat: 'number' },
   { hanzi: '亿', pinyin: 'yì', ko: '억', cat: 'num' },
   { hanzi: '五十六', pinyin: 'wǔshíliù', ko: '56', cat: 'number' },
