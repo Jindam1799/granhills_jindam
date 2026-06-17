@@ -522,3 +522,114 @@ body::after {
     font-size: 1.5rem !important;
   }
 }
+
+/* Level 섹션 디자인 */
+.level-section {
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 600px; /* 화면 중앙 정렬 및 최대 너비 설정 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.level-section h2 {
+  text-align: center;
+  color: #333;
+}
+
+.game-type-box h3 {
+  color: #4a90e2;
+  margin-bottom: 15px;
+}
+
+/* 버튼 바둑판 배열 (가로 4개씩) */
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.button-grid button {
+  padding: 15px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background-color: #ff9f43;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.button-grid button:hover {
+  background-color: #ff7675; /* 마우스 올렸을 때 색상 변화 */
+  transform: scale(1.05); /* 살짝 커지는 효과 */
+}
+
+/* ============================================================
+   [레벨 선택 화면 디자인 추가]
+   ============================================================ */
+
+/* 대형 레벨 버튼 컨테이너 */
+.level-select-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+/* 레벨 버튼 기본 스타일 */
+.level-btn {
+  width: 100%;
+  padding: 22px 15px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: white;
+  background-color: var(--primary); /* 메인 오렌지 색상 */
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(255, 120, 0, 0.25);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* 마우스 기기 호버 효과 */
+@media (hover: hover) {
+  .level-btn:hover:not(.disabled) {
+    background-color: #e66a00;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 120, 0, 0.3);
+  }
+}
+
+/* 터치 피드백 */
+.level-btn:active:not(.disabled) {
+  transform: scale(0.97);
+}
+
+/* 준비 중인 레벨(비활성화) 스타일 */
+.level-btn.disabled {
+  background-color: #d1d5db;
+  color: #6b7280;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* 열릴 때 부드럽게 나타나는 애니메이션 */
+.level-content {
+  animation: fadeInDown 0.4s ease-out forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
