@@ -499,25 +499,26 @@ let rawSentenceData = [];
    [초기 세팅] URL 꼬리표(?day=9)를 읽어옵니다.
    ============================================================ */
 window.onload = function () {
-  // 1. 주소창에서 '?day=9' 같은 꼬리표를 찾아냅니다.
   const urlParams = new URLSearchParams(window.location.search);
-  const selectedDay = urlParams.get('day'); // '9', '10' 등이 들어옵니다.
+  const selectedDay = urlParams.get('day');
 
-  // 2. 만약 꼬리표가 없거나 데이터가 없는 날짜라면 로비로 튕겨냅니다.
   if (!selectedDay || !allSentenceData['day' + selectedDay]) {
     alert('데이터를 불러올 수 없습니다. 로비로 돌아갑니다.');
     location.href = 'index.html';
     return;
   }
 
-  // 3. 꼬리표에 맞는 데이터를 세팅합니다. (예: day9의 데이터를 rawSentenceData에 복사)
+  // 1. 꼬리표에 맞는 데이터를 세팅합니다.
   rawSentenceData = allSentenceData['day' + selectedDay];
 
-  // 4. (선택사항) 화면 맨 위 태그에 몇 일차인지 자동으로 글씨를 바꿔줍니다.
+  // 2. 화면 맨 위 태그에 몇 일차인지 글씨를 바꿔줍니다.
   const titleTag = document.querySelector('.apt-tag');
   if (titleTag) {
     titleTag.innerText = `STEP 2 - Day ${selectedDay}`;
   }
+
+  // 👇 [여기가 핵심입니다!] 데이터를 완벽하게 다 불러온 뒤에 게임을 시작합니다. 👇
+  startGame();
 };
 
 let gameQueue = [];
