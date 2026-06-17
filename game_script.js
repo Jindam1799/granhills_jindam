@@ -518,7 +518,6 @@ window.onload = function () {
   }
 
   // 👇 [여기가 핵심입니다!] 데이터를 완벽하게 다 불러온 뒤에 게임을 시작합니다. 👇
-  startGame();
 };
 
 let gameQueue = [];
