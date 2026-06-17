@@ -32,192 +32,106 @@
         영상을 재생할 수 없습니다.
       </video>
     </div>
-
-    <div class="lobby-container" id="main-lobby" style="display: none">
-      <div class="apt-tag">GRAN HILLS GROUP STUDY</div>
-
-      <header class="lobby-header">
-        <h1>진담중국어 <span>스피킹게임</span></h1>
-        <p>입주민을 위한 프리미엄 복습 공간</p>
-      </header>
-
-      <div class="week-section">
-        <div class="week-title">
-          <span class="week-num">Week 1</span>
-          <span class="week-desc">틀잡기</span>
-        </div>
-        <div class="step-row">
-          <a href="day1_word.html" class="step-card">
-            <span class="step-label">STEP 1</span>
-            <span class="step-name">주요 단어</span>
-          </a>
-          <a href="day1_choice.html" class="step-card">
-            <span class="step-label">STEP 2</span>
-            <span class="step-name">덩어리게임</span>
-          </a>
-        </div>
+    <div class="lobby-container">
+      <div class="lobby-header">
+        <span class="apt-tag">JINDAM CHINESE</span>
+        <h1>진담중국어 <span>로비</span></h1>
+        <p>학습할 레벨을 선택해 주세요!</p>
       </div>
 
-      <div class="week-section">
-        <div class="week-title">
-          <span class="week-num">Week 2</span>
-          <span class="week-desc">인물과 문화</span>
-        </div>
-        <div class="step-row">
-          <a href="day2_word.html" class="step-card">
-            <span class="step-label">STEP 1</span>
-            <span class="step-name">주요 단어</span>
-          </a>
-          <a href="day2_choice.html" class="step-card">
-            <span class="step-label">STEP 2</span>
-            <span class="step-name">덩어리게임</span>
-          </a>
-        </div>
+      <!-- 🌟 레벨 선택 대형 버튼 영역 -->
+      <div class="level-select-container">
+        <button class="level-btn" onclick="toggleLevel('level1-content')">
+          🌟 Level 1 시작하기
+        </button>
+
+        <!-- 🚀 Level 2 버튼 잠금 해제 및 토글 함수 연결 -->
+        <button class="level-btn" onclick="toggleLevel('level2-content')">
+          🚀 Level 2 시작하기
+        </button>
       </div>
 
-      <div class="week-section">
-        <div class="week-title">
-          <span class="week-num">Week 3</span>
-          <span class="week-desc">문장과 단어</span>
-        </div>
-        <div class="step-row">
-          <a href="day3_word.html" class="step-card">
-            <span class="step-label">STEP 1</span>
-            <span class="step-name">주요 단어</span>
-          </a>
-          <a href="day3_choice.html" class="step-card">
-            <span class="step-label">STEP 2</span>
-            <span class="step-name">덩어리게임</span>
-          </a>
+      <!-- 🌟 Level 1 클릭 시 나타날 상세 영역 (초기 상태: display:none) -->
+      <div id="level1-content" class="level-content" style="display: none">
+        <div class="level-section">
+          <h2>🌟 진담중국어 Level 1 🌟</h2>
+
+          <!-- Step 1: 단어 스피드 게임 -->
+          <div class="game-type-box">
+            <h3>📖 Step 1: 단어 스피드 게임</h3>
+            <div class="button-grid">
+              <button onclick="location.href = 'day1_word.html'">Day 1</button>
+              <button onclick="location.href = 'day2_word.html'">Day 2</button>
+              <button onclick="location.href = 'day3_word.html'">Day 3</button>
+              <button onclick="location.href = 'day4_word.html'">Day 4</button>
+              <button onclick="location.href = 'day5_word.html'">Day 5</button>
+              <button onclick="location.href = 'day6_word.html'">Day 6</button>
+              <button onclick="location.href = 'day7_word.html'">Day 7</button>
+              <button onclick="location.href = 'day8_word.html'">Day 8</button>
+            </div>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0" />
+
+          <!-- Step 2: 문장 덩어리 게임 -->
+          <div class="game-type-box">
+            <h3>🗣️ Step 2: 문장 덩어리 게임</h3>
+            <div class="button-grid">
+              <button onclick="location.href = 'day1_choice.html'">
+                Day 1
+              </button>
+              <button onclick="location.href = 'day2_choice.html'">
+                Day 2
+              </button>
+              <button onclick="location.href = 'day3_choice.html'">
+                Day 3
+              </button>
+              <button onclick="location.href = 'day4_choice.html'">
+                Day 4
+              </button>
+              <button onclick="location.href = 'day5_choice.html'">
+                Day 5
+              </button>
+              <button onclick="location.href = 'day6_choice.html'">
+                Day 6
+              </button>
+              <button onclick="location.href = 'day7_choice.html'">
+                Day 7
+              </button>
+              <button onclick="location.href = 'day8_choice.html'">
+                Day 8
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+      <!-- Level 1 끝 -->
 
-      <div class="week-section">
-        <div class="week-title">
-          <span class="week-num">Week 4</span>
-          <span class="week-desc">문장과 단어</span>
-        </div>
-        <div class="step-row">
-          <a href="day4_word.html" class="step-card">
-            <span class="step-label">STEP 1</span>
-            <span class="step-name">주요 단어</span>
-          </a>
-          <a href="day4_choice.html" class="step-card">
-            <span class="step-label">STEP 2</span>
-            <span class="step-name">덩어리게임</span>
-          </a>
+      <!-- 🌟 Level 2가 lobby-container 안쪽으로 들어왔습니다! -->
+      <div id="level2-content" class="level-content" style="display: none">
+        <div class="level-section">
+          <h2>🚀 진담중국어 Level 2 (실전 문장) 🚀</h2>
+
+          <div class="game-type-box">
+            <h3>🗣️ 실전 문장 덩어리 게임</h3>
+            <div class="button-grid">
+              <!-- 👇 이렇게 하나로 통일하고 물음표(?) 뒤에 숫자만 바꿔주세요 👇 -->
+              <button onclick="location.href = 'game.html?day=9'">Day 9</button>
+              <button onclick="location.href = 'game.html?day=10'">
+                Day 10
+              </button>
+              <button onclick="location.href = 'game.html?day=11'">
+                Day 11
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="week-section">
-        <div class="week-title">
-          <span class="week-num">Week 5</span>
-          <span class="week-desc">문장과 단어</span>
-        </div>
-        <div class="step-row">
-          <a href="day5_word.html" class="step-card">
-            <span class="step-label">STEP 1</span>
-            <span class="step-name">주요 단어</span>
-          </a>
-          <a href="day5_choice.html" class="step-card">
-            <span class="step-label">STEP 2</span>
-            <span class="step-name">덩어리게임</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="week-section">
-        <div class="week-title">
-          <span class="week-num">Week 6</span>
-          <span class="week-desc">문장과 단어</span>
-        </div>
-        <div class="step-row">
-          <a href="day6_word.html" class="step-card">
-            <span class="step-label">STEP 1</span>
-            <span class="step-name">주요 단어</span>
-          </a>
-          <a href="day6_choice.html" class="step-card">
-            <span class="step-label">STEP 2</span>
-            <span class="step-name">덩어리게임</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="week-section">
-        <div class="week-title">
-          <span class="week-num">Week 7</span>
-          <span class="week-desc">문장과 단어</span>
-        </div>
-        <div class="step-row">
-          <a href="day7_word.html" class="step-card">
-            <span class="step-label">STEP 1</span>
-            <span class="step-name">주요 단어</span>
-          </a>
-          <a href="day7_choice.html" class="step-card">
-            <span class="step-label">STEP 2</span>
-            <span class="step-name">덩어리게임</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="week-section">
-        <div class="week-title">
-          <span class="week-num">Week 8</span>
-          <span class="week-desc">문장과 단어</span>
-        </div>
-        <div class="step-row">
-          <a href="day8_word.html" class="step-card">
-            <span class="step-label">STEP 1</span>
-            <span class="step-name">주요 단어</span>
-          </a>
-          <a href="day8_choice.html" class="step-card">
-            <span class="step-label">STEP 2</span>
-            <span class="step-name">덩어리게임</span>
-          </a>
-        </div>
-      </div>
-
-      <footer class="lobby-footer">
-        <p class="footer-brand">진담중국어 X 부평 그랑힐스</p>
-        <p class="footer-info">입주민을 위한 맞춤 교육 시스템</p>
-        <p class="copyright">
-          &copy; 2026 JINDAM CHINESE. All rights reserved.
-        </p>
-      </footer>
     </div>
+    <!-- 🌟 여기가 lobby-container의 진짜 끝입니다 -->
 
-    <script>
-      function startLobby() {
-        const introOverlay = document.getElementById('intro-overlay');
-        const introVideo = document.getElementById('intro-video');
-        const mainLobby = document.getElementById('main-lobby');
+    <script src="index_script.js"></script>
 
-        // ★ 함수 안에서 오디오 요소를 다시 찾습니다.
-        const introBgm = document.getElementById('intro-bgm');
-
-        if (!introOverlay) return;
-
-        // ★ 소리 재생 명령
-        if (introBgm) {
-          introBgm.muted = false; // 혹시 모르니 무음 해제
-          introBgm
-            .play()
-            .then(() => console.log('음악 재생 성공!'))
-            .catch((e) => {
-              console.error('재생 실패 원인:', e);
-              alert('소리 재생에 실패했습니다. 파일 경로를 확인해주세요.');
-            });
-        }
-
-        // 인트로 숨기기 로직
-        introOverlay.style.opacity = '0';
-        setTimeout(() => {
-          introOverlay.style.display = 'none';
-          if (mainLobby) mainLobby.style.display = 'flex';
-          if (introVideo) introVideo.pause();
-        }, 800);
-      }
-    </script>
     <audio id="intro-bgm" src="intro_music.mp3" loop></audio>
     <audio id="timer-sound" src="timer_tick.mp3" loop></audio>
     <audio id="correct-sound" src="correct.mp3"></audio>
