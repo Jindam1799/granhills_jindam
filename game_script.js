@@ -1,6 +1,6 @@
 const allSentenceData = {
   /* ============================================================
-     [데이터 설정] Day 9 ~ 11
+     [데이터 설정]
      ============================================================ */
   day9: [
     {
@@ -188,6 +188,7 @@ const allSentenceData = {
       ko: '누가 한자를 쓸 줄 알아요?',
       chunks: [
         { h: '谁', p: 'shéi' },
+
         { h: '会', p: 'huì' },
         { h: '写', p: 'xiě' },
         { h: '汉字', p: 'Hànzì' },
@@ -513,7 +514,7 @@ window.onload = function () {
 };
 
 /* ============================================================
-   🔥 [안드로이드 마스터 키] 화면 첫 터치 시 모든 소리 잠금 강제 해제
+   🔥 [안드로이드 마스터 키] 터치 시 모든 오디오 제약 강제 해제
    ============================================================ */
 let isAudioUnlocked = false;
 window.addEventListener(
@@ -521,43 +522,41 @@ window.addEventListener(
   function () {
     if (isAudioUnlocked) return;
 
-    // 1. 효과음 락 해제
     ['timer-sound', 'correct-sound', 'wrong-sound'].forEach((id) => {
       const audio = document.getElementById(id);
       if (audio) {
-        audio.muted = true;
         audio
           .play()
           .then(() => {
             audio.pause();
             audio.currentTime = 0;
-            audio.muted = false;
           })
           .catch(() => {});
       }
     });
 
-    // 2. TTS 락 해제
+    // TTS 엔진 먹통 방지를 위해 공백문자를 볼륨 0으로 쏩니다.
     if ('speechSynthesis' in window) {
-      let msg = new SpeechSynthesisUtterance('');
+      let msg = new SpeechSynthesisUtterance(' ');
+      msg.volume = 0;
       window.speechSynthesis.speak(msg);
     }
     isAudioUnlocked = true;
   },
   { once: true },
-); // 딱 한 번만 실행됨
+);
 
 /* ============================================================
-   [핵심 함수] 효과음 재생 (안드로이드 복제 차단 버그 해결)
+   [효과음 재생 로직] 볼륨 1.0 강제 세팅
    ============================================================ */
 function playEffect(audioElement) {
   if (!audioElement) return;
   try {
     audioElement.pause();
     audioElement.currentTime = 0;
+    audioElement.volume = 1.0; // 볼륨 100% 명시
     audioElement.muted = false;
-    audioElement.volume = 1;
-    audioElement.play().catch((e) => console.log(e)); // 복제(cloneNode) 금지! 원본만 재생
+    audioElement.play().catch(() => {});
   } catch (e) {}
 }
 
@@ -630,8 +629,9 @@ function selectChunk(chunk, cardElement) {
   };
   display.appendChild(selectedTag);
 
+  // 🔥 딜레이 제로: 카드를 다 고르면 0초 만에 바로 정답 체크
   if (selectedChunks.length === answerOrder.length) {
-    checkAnswer(); // 딜레이 없이 즉시 정답 체크
+    checkAnswer();
   }
 }
 
@@ -644,7 +644,8 @@ function checkAnswer() {
   const fb = document.getElementById('feedback-msg');
 
   if (isCorrect) {
-    playEffect(correctSound); // 복제 버그를 해결했으므로 띠링~ 소리가 정상적으로 납니다.
+    // 효과음과 TTS를 동시에 정상 재생합니다.
+    playEffect(correctSound);
 
     const currentQuestion = gameQueue[currentIdx];
     const fullSentence = currentQuestion.chunks
@@ -655,7 +656,7 @@ function checkAnswer() {
     fb.innerText = '딩동댕! 잘하셨어요! 👏';
     fb.style.color = 'var(--correct)';
 
-    // 즉시 팝업창 띄우기
+    // 🔥 딜레이 제로: 정답 즉시 팝업 띄우고 TTS 발사!
     showTTSPopup(fullSentence, fullPinyin);
   } else {
     playEffect(wrongSound);
@@ -692,6 +693,7 @@ function startTimer() {
   if (timerSound) {
     timerSound.pause();
     timerSound.currentTime = 0;
+    timerSound.volume = 1.0; // 🔥 타이머 볼륨 무조건 100% 시작
     timerSound.muted = false;
     timerSound.play().catch(() => {});
   }
@@ -734,7 +736,7 @@ function endGame() {
 }
 
 /* ============================================================
-   [TTS & 팝업 기능] 안드로이드 최종 안정화 버전
+   [TTS & 팝업 기능] 딜레이 0초, 완전 동기화 버전
    ============================================================ */
 let currentFullSentence = '';
 
@@ -786,10 +788,10 @@ window.playTTS = function (text) {
     if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
   } catch (e) {}
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'zh-CN';
-  utterance.rate = 0.65;
-  utterance.volume = 1.0;
+  window.activeUtterance = new SpeechSynthesisUtterance(text);
+  window.activeUtterance.lang = 'zh-CN';
+  window.activeUtterance.rate = 0.65;
+  window.activeUtterance.volume = 1.0;
 
   const voices = window.speechSynthesis.getVoices();
   if (voices && voices.length > 0) {
@@ -802,20 +804,18 @@ window.playTTS = function (text) {
     );
     const defaultZhVoice = voices.find((v) => v.lang.includes('zh-CN'));
     if (femaleVoice) {
-      utterance.voice = femaleVoice;
+      window.activeUtterance.voice = femaleVoice;
     } else if (defaultZhVoice) {
-      utterance.voice = defaultZhVoice;
+      window.activeUtterance.voice = defaultZhVoice;
     }
   }
 
-  // 약간의 딜레이(100ms)를 주어 정답 사운드와 충돌하는 것을 방지합니다.
-  setTimeout(() => {
-    try {
-      window.speechSynthesis.speak(utterance);
-    } catch (e) {
-      console.error(e);
-    }
-  }, 100);
+  // 🔥 딜레이 완전 삭제: 0.1초도 기다리지 않고 터치 시점에 맞춰 100% 즉시 재생
+  try {
+    window.speechSynthesis.speak(window.activeUtterance);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 window.replayTTS = function () {
@@ -836,6 +836,7 @@ window.showTTSPopup = function (text, pinyin) {
     popup.style.display = 'flex';
     popup.classList.add('active');
   }
+
   window.playTTS(text);
 };
 
