@@ -904,7 +904,7 @@ window.showTTSPopup = function (text, pinyin) {
   document.getElementById('tts-popup-cn').innerText = text;
   document.getElementById('tts-popup-py').innerText = pinyin;
 
-  document.getElementById('tts-popup-py').style.style.display = 'none';
+  document.getElementById('tts-popup-py').style.display = 'none';
   document.getElementById('py-toggle-btn').innerText = '👀 병음 보기';
 
   const popup = document.getElementById('tts-popup');
