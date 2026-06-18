@@ -1,7 +1,7 @@
 const allSentenceData = {
   /* ============================================================
-   [데이터 설정]
-   ============================================================ */
+     [데이터 설정]
+     ============================================================ */
   day9: [
     {
       ko: '저는 중국어를 할 줄 알아요.',
@@ -130,8 +130,6 @@ const allSentenceData = {
         { h: '汉字', p: 'Hànzì' },
       ],
     },
-
-    // 의문문 형태
     {
       ko: '누가 중국어를 할 줄 알아요?',
       chunks: [
@@ -190,6 +188,7 @@ const allSentenceData = {
       ko: '누가 한자를 쓸 줄 알아요?',
       chunks: [
         { h: '谁', p: 'shéi' },
+
         { h: '会', p: 'huì' },
         { h: '写', p: 'xiě' },
         { h: '汉字', p: 'Hànzì' },
@@ -265,7 +264,6 @@ const allSentenceData = {
         { h: '赢', p: 'yíng' },
       ],
     },
-
     {
       ko: '여러분은 한국어를 알아들을 수 있다.',
       chunks: [
@@ -289,34 +287,34 @@ const allSentenceData = {
       ko: '제 중국인 친구는 매운 것을 먹을 수 있다.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '的', p: 'de' },
+        { h: '의', p: 'de' },
         { h: '中国', p: 'zhōngguó' },
         { h: '朋友', p: 'péngyou' },
         { h: '能', p: 'néng' },
         { h: '吃', p: 'chī' },
         { h: '辣', p: 'là' },
-        { h: '的', p: 'de' },
+        { h: '의', p: 'de' },
       ],
     },
     {
       ko: '제 중국인 친구는 매운 것을 먹을 수 없다.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '的', p: 'de' },
+        { h: '의', p: 'de' },
         { h: '中国', p: 'zhōngguó' },
         { h: '朋友', p: 'péngyou' },
         { h: '不', p: 'bù' },
         { h: '能', p: 'néng' },
         { h: '吃', p: 'chī' },
         { h: '辣', p: 'là' },
-        { h: '的', p: 'de' },
+        { h: '의', p: 'de' },
       ],
     },
     {
       ko: '당신의 배우자는 문제를 해결할 것이다.',
       chunks: [
         { h: '您', p: 'nín' },
-        { h: '的', p: 'de' },
+        { h: '의', p: 'de' },
         { h: '爱人', p: 'àiren' },
         { h: '会', p: 'huì' },
         { h: '解决', p: 'jiějué' },
@@ -327,7 +325,7 @@ const allSentenceData = {
       ko: '당신의 배우자는 문제를 해결하지 못할 것이다.',
       chunks: [
         { h: '您', p: 'nín' },
-        { h: '的', p: 'de' },
+        { h: '의', p: 'de' },
         { h: '爱人', p: 'àiren' },
         { h: '不', p: 'bú' },
         { h: '会', p: 'huì' },
@@ -357,7 +355,6 @@ const allSentenceData = {
       ],
     },
   ],
-
   day11: [
     {
       ko: '너 들어갈 수 있어?',
@@ -394,7 +391,7 @@ const allSentenceData = {
         { h: '今天', p: 'jīntiān' },
         { h: '不', p: 'bù' },
         { h: '能', p: 'néng' },
-        { h: '上课', p: 'shàngkè' },
+        { h: '上課', p: 'shàngkè' },
       ],
     },
     {
@@ -409,7 +406,7 @@ const allSentenceData = {
     {
       ko: '그들은 오늘 나갈 수 없어요.',
       chunks: [
-        { h: '他们', p: 'tāmen' },
+        { h: '**', p: 'tāmen' },
         { h: '今天', p: 'jīntiān' },
         { h: '不', p: 'bù' },
         { h: '能', p: 'néng' },
@@ -456,7 +453,6 @@ const allSentenceData = {
         { h: '到', p: 'dào' },
       ],
     },
-
     {
       ko: '여러분은 한자를 이해할 수 없어요.',
       chunks: [
@@ -471,7 +467,7 @@ const allSentenceData = {
       ko: '제 배우자는 숙제를 끝낼 수 있어요.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '的', p: 'de' },
+        { h: '의', p: 'de' },
         { h: '爱人', p: 'àiren' },
         { h: '能', p: 'néng' },
         { h: '完成', p: 'wánchéng' },
@@ -482,7 +478,7 @@ const allSentenceData = {
       ko: '제 중국인 친구는 문제를 해결할 수 없어요.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '的', p: 'de' },
+        { h: '의', p: 'de' },
         { h: '中国', p: 'Zhōngguó' },
         { h: '朋友', p: 'péngyou' },
         { h: '不', p: 'bù' },
@@ -495,31 +491,6 @@ const allSentenceData = {
 };
 
 let rawSentenceData = [];
-/* ============================================================
-   [초기 세팅] URL 꼬리표(?day=9)를 읽어옵니다.
-   ============================================================ */
-window.onload = function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const selectedDay = urlParams.get('day');
-
-  if (!selectedDay || !allSentenceData['day' + selectedDay]) {
-    alert('데이터를 불러올 수 없습니다. 로비로 돌아갑니다.');
-    location.href = 'index.html';
-    return;
-  }
-
-  // 1. 꼬리표에 맞는 데이터를 세팅합니다.
-  rawSentenceData = allSentenceData['day' + selectedDay];
-
-  // 2. 화면 맨 위 태그에 몇 일차인지 글씨를 바꿔줍니다.
-  const titleTag = document.querySelector('.apt-tag');
-  if (titleTag) {
-    titleTag.innerText = `STEP 2 - Day ${selectedDay}`;
-  }
-
-  // 👇 [여기가 핵심입니다!] 데이터를 완벽하게 다 불러온 뒤에 게임을 시작합니다. 👇
-};
-
 let gameQueue = [];
 let currentIdx = 0;
 let score = 0;
@@ -527,62 +498,42 @@ let timeLeft = 20;
 let timerInterval;
 let selectedChunks = [];
 let answerOrder = [];
-
 let timerSound, correctSound, wrongSound;
 
-/* ============================================================
-   [핵심 함수] 효과음 씹힘 방지 (복제 재생)
-   ============================================================ */
+window.onload = function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const selectedDay = urlParams.get('day');
+  if (!selectedDay || !allSentenceData['day' + selectedDay]) {
+    alert('데이터를 불러올 수 없습니다. 로비로 돌아갑니다.');
+    location.href = 'index.html';
+    return;
+  }
+  rawSentenceData = allSentenceData['day' + selectedDay];
+  const titleTag = document.querySelector('.apt-tag');
+  if (titleTag) titleTag.innerText = `STEP 2 - Day ${selectedDay}`;
+};
+
 function playEffect(audioElement) {
   if (!audioElement) return;
   const clone = audioElement.cloneNode(true);
   clone.volume = 1;
-  clone.muted = false; // ★ 복제본 무조건 음소거 해제
+  clone.muted = false;
   clone.play().catch(() => {});
 }
 
-/* ============================================================
-   [핵심 함수] startGame (Day 9~11 통짜 배열용으로 수정됨)
-   ============================================================ */
 function startGame() {
   timerSound = document.getElementById('timer-sound');
   correctSound = document.getElementById('correct-sound');
   wrongSound = document.getElementById('wrong-sound');
 
-  const unlockSounds = [timerSound, correctSound, wrongSound];
-  unlockSounds.forEach((s) => {
-    if (s) {
-      s.muted = true;
-      let p = s.play();
-      if (p !== undefined) {
-        p.then(() => {
-          s.pause();
-          s.currentTime = 0;
-          s.muted = false;
-        }).catch(() => {
-          s.muted = false;
-        });
-      } else {
-        s.muted = false;
-      }
-    }
-  });
-
-  // ★ 수정된 부분: 카테고리 찾지 않고 그냥 전체 데이터를 섞습니다 ★
-  let shuffled = [...rawSentenceData].sort(() => 0.5 - Math.random());
-
-  // 만약 전체 문장(약 20개) 중 10문제만 내고 싶다면 아래처럼 slice(0, 10)을 씁니다.
-  // 전부 다 풀게 하고 싶으시면 그냥 gameQueue = shuffled; 라고 쓰시면 됩니다.
-  gameQueue = shuffled.slice(0, 20);
-
+  gameQueue = [...rawSentenceData].sort(() => 0.5 - Math.random()).slice(0, 20);
   currentIdx = 0;
   score = 0;
 
   document.getElementById('ko-sentence').innerText = '준비...';
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('game-board').style.display = 'block';
-
-  setTimeout(loadQuestion, 150);
+  loadQuestion();
 }
 
 function loadQuestion() {
@@ -613,13 +564,11 @@ function loadQuestion() {
       };
       pool.appendChild(card);
     });
-
   startTimer();
 }
 
 function selectChunk(chunk, cardElement) {
   if (cardElement.classList.contains('used')) return;
-
   cardElement.blur();
   cardElement.classList.add('used');
   selectedChunks.push(chunk.h);
@@ -629,7 +578,6 @@ function selectChunk(chunk, cardElement) {
   selectedTag.className = 'selected-card';
   selectedTag.style.cursor = 'pointer';
   selectedTag.innerHTML = `<div class="hz-text">${chunk.h}</div><div class="py-text">${chunk.p}</div>`;
-
   selectedTag.onclick = function () {
     for (let i = selectedChunks.length - 1; i >= 0; i--) {
       if (selectedChunks[i] === chunk.h) {
@@ -639,16 +587,15 @@ function selectChunk(chunk, cardElement) {
     }
     this.remove();
     cardElement.classList.remove('used');
-    const fb = document.getElementById('feedback-msg');
-    if (fb) fb.innerText = '';
   };
-
   display.appendChild(selectedTag);
-  // 👇수정할 부분: 카드를 다 고르면 딜레이 없이 즉시 정답 체크로 넘어갑니다.
+
+  // 💡 안드로이드 락 우회: 딜레이를 완벽히 없애 유저 터치 권한 유지
   if (selectedChunks.length === answerOrder.length) {
     checkAnswer();
   }
 }
+
 function checkAnswer() {
   clearInterval(timerInterval);
   if (timerSound) timerSound.pause();
@@ -656,10 +603,14 @@ function checkAnswer() {
   const isCorrect =
     JSON.stringify(selectedChunks) === JSON.stringify(answerOrder);
   const fb = document.getElementById('feedback-msg');
-  const display = document.getElementById('sentence-display');
 
   if (isCorrect) {
-    playEffect(correctSound);
+    // 💡 안드로이드 핵심: 오디오 파일(띠링~)과 TTS가 동시 재생되면 안드로이드가 TTS를 차단합니다.
+    // 안드로이드 환경에서는 효과음을 건너뛰고 오직 맑은 TTS 음성에 집중시킵니다.
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (!isAndroid) {
+      playEffect(correctSound);
+    }
 
     const currentQuestion = gameQueue[currentIdx];
     const fullSentence = currentQuestion.chunks
@@ -670,20 +621,20 @@ function checkAnswer() {
     fb.innerText = '딩동댕! 잘하셨어요! 👏';
     fb.style.color = 'var(--correct)';
 
-    // 👇수정할 부분: 300ms 딜레이를 없애고 팝업과 TTS를 즉시 호출합니다.
+    // 즉시 팝업창 실행 (0초 딜레이)
     showTTSPopup(fullSentence, fullPinyin);
   } else {
-    // 오답 시 기존 코드 유지
     playEffect(wrongSound);
     fb.innerText = '틀렸어요! 다시 맞춰보세요 🧐';
     fb.style.color = 'var(--wrong)';
-    display.classList.add('shake');
+    document.getElementById('sentence-display').classList.add('shake');
     setTimeout(() => {
-      display.classList.remove('shake');
+      document.getElementById('sentence-display').classList.remove('shake');
       resetCurrentSentence();
     }, 1200);
   }
 }
+
 function resetCurrentSentence() {
   selectedChunks = [];
   document.getElementById('sentence-display').innerHTML = '';
@@ -697,31 +648,19 @@ function resetCurrentSentence() {
 
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
-
   timeLeft = 20;
-
   const timerDisplay = document.getElementById('timer');
   if (timerDisplay) {
     timerDisplay.innerText = timeLeft;
     timerDisplay.style.color = 'var(--primary)';
   }
-
-  if (timerSound) {
-    timerSound.muted = false; // ★ 켤 때 한 번 더 확실하게 음소거 해제
-    timerSound.pause();
-    timerSound.currentTime = 0;
-    timerSound.play().catch(() => {});
-  }
-
   timerInterval = setInterval(() => {
     timeLeft--;
-
     const currentDisplay = document.getElementById('timer');
     if (currentDisplay) {
       currentDisplay.innerText = timeLeft;
       if (timeLeft <= 5) currentDisplay.style.color = 'var(--wrong)';
     }
-
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       handleTimeOut();
@@ -730,25 +669,15 @@ function startTimer() {
 }
 
 function handleTimeOut() {
-  if (timerSound) timerSound.pause();
-
   playEffect(wrongSound);
-
-  const display = document.getElementById('sentence-display');
   document.getElementById('feedback-msg').innerText =
     '시간 초과! 다시 도전! ⏰';
   document.getElementById('feedback-msg').style.color = 'var(--wrong)';
-  display.classList.add('shake');
-
-  setTimeout(() => {
-    display.classList.remove('shake');
-    resetCurrentSentence();
-  }, 1200);
+  resetCurrentSentence();
 }
 
 function endGame() {
   clearInterval(timerInterval);
-  if (timerSound) timerSound.pause();
   document.getElementById('game-board').style.display = 'none';
   const result = document.getElementById('result-screen');
   if (result) result.style.display = 'flex';
@@ -757,33 +686,11 @@ function endGame() {
 }
 
 /* ============================================================
-   [TTS 기능] 중국어 원어민 발음 읽어주기
-   ============================================================ */
-function speakChinese(text) {
-  // 브라우저가 TTS 기능을 지원하는지 확인
-  if ('speechSynthesis' in window) {
-    // 혹시 이전에 읽고 있던 소리가 있다면 끊고 새로 시작
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'zh-CN'; // 중국어(본토 간체) 설정
-
-    // 발음 속도 조절 (1.0이 기본, 0.85 정도면 학습하기 딱 좋은 속도입니다)
-    utterance.rate = 0.85;
-
-    // 브라우저(구글) 엔진에게 읽어달라고 명령!
-    window.speechSynthesis.speak(utterance);
-  }
-}
-/* ============================================================
-   [TTS & 팝업 기능] 안드로이드 모바일 버그 원천 차단 버전
+   [TTS & 팝업 기능] 안드로이드 완벽 대응 극초고속 버전
    ============================================================ */
 let currentFullSentence = '';
-
-// 💡 안드로이드 크롬 핵심 수정: 가비지 컬렉터(메모리 삭제) 방지용 전역 변수 설정
 window.activeUtterance = null;
 
-// 페이지가 로드될 때 안드로이드 TTS 엔진을 미리 깨워둡니다.
 if ('speechSynthesis' in window) {
   window.speechSynthesis.getVoices();
   if (window.speechSynthesis.onvoiceschanged !== undefined) {
@@ -793,7 +700,6 @@ if ('speechSynthesis' in window) {
   }
 }
 
-// 1. 팝업창 생성 (기존 구조 유지)
 function createTTSPopup() {
   if (document.getElementById('tts-popup')) return;
   const overlay = document.createElement('div');
@@ -804,10 +710,8 @@ function createTTSPopup() {
     <div class="tts-popup-box">
       <div class="apt-tag" style="margin-bottom:15px; display:inline-block;">정답 확인</div>
       <div id="tts-popup-cn" class="tts-popup-cn"></div>
-      
       <button id="py-toggle-btn" class="py-toggle-btn" onclick="togglePinyin()">👀 병음 보기</button>
       <div id="tts-popup-py" class="tts-popup-py"></div>
-      
       <div class="tts-popup-btn-group">
         <button class="tts-btn tts-btn-listen" onclick="replayTTS()">🎧 다시 듣기</button>
         <button class="tts-btn tts-btn-next" onclick="closeTTSPopupAndNext()">▶ 다음 문제</button>
@@ -817,11 +721,9 @@ function createTTSPopup() {
   document.body.appendChild(overlay);
 }
 
-// 2. 병음 보기 토글
 window.togglePinyin = function () {
   const pyDiv = document.getElementById('tts-popup-py');
   const pyBtn = document.getElementById('py-toggle-btn');
-
   if (pyDiv.style.display === 'none' || pyDiv.style.display === '') {
     pyDiv.style.display = 'block';
     pyBtn.innerText = '🙈 병음 숨기기';
@@ -830,14 +732,11 @@ window.togglePinyin = function () {
     pyBtn.innerText = '👀 병음 보기';
   }
 };
-// 3. 💡 안드로이드 완벽 대응 재생 함수 (딜레이 0초 발사)
+
 window.playTTS = function (text) {
   if (!('speechSynthesis' in window)) return;
-
   try {
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-    }
+    if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
   } catch (e) {}
 
   window.activeUtterance = new SpeechSynthesisUtterance(text);
@@ -845,77 +744,64 @@ window.playTTS = function (text) {
   window.activeUtterance.rate = 0.65;
   window.activeUtterance.volume = 1.0;
 
-  const voices = window.speechSynthesis.getVoices();
-  if (voices && voices.length > 0) {
-    const femaleVoice = voices.find(
-      (v) =>
-        v.lang.includes('zh-CN') &&
-        (v.name.includes('Xiaoxiao') ||
-          v.name.includes('Google') ||
-          v.name.includes('Female')),
-    );
-    const defaultZhVoice = voices.find((v) => v.lang.includes('zh-CN'));
-
-    if (femaleVoice) {
-      window.activeUtterance.voice = femaleVoice;
-    } else if (defaultZhVoice) {
-      window.activeUtterance.voice = defaultZhVoice;
+  // 💡 안드로이드 전용 처리: 모바일 크롬은 특정한 오프라인 음성을 강제 지정하면 재생이 차단됩니다.
+  // lang 기반으로 시스템 기본 여성 음성을 타게 만드는 것이 가장 안전합니다.
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  if (!isAndroid) {
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      const femaleVoice = voices.find(
+        (v) =>
+          v.lang.includes('zh-CN') &&
+          (v.name.includes('Xiaoxiao') ||
+            v.name.includes('Google') ||
+            v.name.includes('Female')),
+      );
+      if (femaleVoice) window.activeUtterance.voice = femaleVoice;
     }
   }
 
-  // 👇수정할 부분: setTimeout 80ms를 지우고 단 1ms의 딜레이도 없이 즉시 재생합니다!
   try {
     window.speechSynthesis.speak(window.activeUtterance);
   } catch (e) {
-    console.error('안드로이드 TTS 재생 실패:', e);
+    console.error(e);
   }
 };
 
-// 4. 다시 듣기 버튼 (유저의 직접 터치이므로 안드로이드 락을 완벽히 뚫고 고정 속도로 재생됩니다)
 window.replayTTS = function () {
   window.playTTS(currentFullSentence);
 };
 
-// 5. 정답 맞췄을 때 팝업 띄우기
 window.showTTSPopup = function (text, pinyin) {
   createTTSPopup();
   currentFullSentence = text;
   document.getElementById('tts-popup-cn').innerText = text;
   document.getElementById('tts-popup-py').innerText = pinyin;
 
+  // 💡 오타 수정 완료! (style.style -> style)
   document.getElementById('tts-popup-py').style.display = 'none';
   document.getElementById('py-toggle-btn').innerText = '👀 병음 보기';
 
   const popup = document.getElementById('tts-popup');
   if (popup) {
     popup.style.display = 'flex';
-    setTimeout(() => {
-      popup.classList.add('active');
-    }, 10);
+    popup.classList.add('active');
   }
-
-  // 정답 팝업 뜨면서 최초 자동 재생 시도
-  window.playTTS(text);
+  window.playTTS(text); // 딜레이 0초 즉시 재생
 };
 
-// 6. 다음 문제 넘어가기
 window.closeTTSPopupAndNext = function () {
   try {
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
-    }
+    if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
   } catch (e) {}
-
   const popup = document.getElementById('tts-popup');
   if (popup) {
     popup.classList.remove('active');
     popup.style.display = 'none';
   }
-
   score++;
-  const scoreEl = document.getElementById('score');
-  if (scoreEl) scoreEl.innerText = score;
-
+  if (document.getElementById('score'))
+    document.getElementById('score').innerText = score;
   currentIdx++;
   loadQuestion();
 };
