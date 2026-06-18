@@ -115,7 +115,8 @@ const allSentenceData = {
       ko: '저는 한자를 쓸 줄 알아요.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '会写', p: 'huì xiě' },
+        { h: '会', p: 'huì' },
+        { h: '写', p: 'xiě' },
         { h: '汉字', p: 'Hànzì' },
       ],
     },
@@ -189,7 +190,6 @@ const allSentenceData = {
       ko: '누가 한자를 쓸 줄 알아요?',
       chunks: [
         { h: '谁', p: 'shéi' },
-        { h: '不', p: 'bú' },
         { h: '会', p: 'huì' },
         { h: '写', p: 'xiě' },
         { h: '汉字', p: 'Hànzì' },
@@ -644,19 +644,9 @@ function selectChunk(chunk, cardElement) {
   };
 
   display.appendChild(selectedTag);
-
-  // selectChunk 함수 내부의 맨 아랫부분 코드입니다.
+  // 👇수정할 부분: 카드를 다 고르면 딜레이 없이 즉시 정답 체크로 넘어갑니다.
   if (selectedChunks.length === answerOrder.length) {
-    // 💡 안드로이드 오디오 통로 강제 개방: 유저 터치 순간 빈 소리를 먹여 락을 해제합니다.
-    if ('speechSynthesis' in window) {
-      try {
-        const warmUp = new SpeechSynthesisUtterance('');
-        window.speechSynthesis.speak(warmUp);
-      } catch (e) {}
-    }
-
-    // 정답 체크 함수 호출 딜레이
-    setTimeout(checkAnswer, 100);
+    checkAnswer();
   }
 }
 function checkAnswer() {
@@ -671,22 +661,17 @@ function checkAnswer() {
   if (isCorrect) {
     playEffect(correctSound);
 
-    // 👇 현재 문제 데이터에서 한자와 병음을 각각 추출해서 합칩니다 👇
     const currentQuestion = gameQueue[currentIdx];
-    // 한자는 띄어쓰기 없이 붙임
     const fullSentence = currentQuestion.chunks
       .map((chunk) => chunk.h)
       .join('');
-    // 병음은 단어별로 띄어쓰기를 넣어서 보기 좋게 합침
     const fullPinyin = currentQuestion.chunks.map((chunk) => chunk.p).join(' ');
 
     fb.innerText = '딩동댕! 잘하셨어요! 👏';
     fb.style.color = 'var(--correct)';
 
-    // 한자와 병음을 모두 팝업 함수로 전달!
-    setTimeout(() => {
-      showTTSPopup(fullSentence, fullPinyin);
-    }, 300);
+    // 👇수정할 부분: 300ms 딜레이를 없애고 팝업과 TTS를 즉시 호출합니다.
+    showTTSPopup(fullSentence, fullPinyin);
   } else {
     // 오답 시 기존 코드 유지
     playEffect(wrongSound);
@@ -845,25 +830,21 @@ window.togglePinyin = function () {
     pyBtn.innerText = '👀 병음 보기';
   }
 };
-
-// 3. 💡 안드로이드 완벽 대응 재생 함수
+// 3. 💡 안드로이드 완벽 대응 재생 함수 (딜레이 0초 발사)
 window.playTTS = function (text) {
   if (!('speechSynthesis' in window)) return;
 
   try {
-    // 안드로이드 멈춤 방지: 실제로 소리가 나고 있을 때만 안전하게 cancel 실행
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
     }
   } catch (e) {}
 
-  // 💡 핵심: 로컬 변수 대신 window 전역 변수에 담아 스마트폰 메모리 삭제 버그 방지!
   window.activeUtterance = new SpeechSynthesisUtterance(text);
   window.activeUtterance.lang = 'zh-CN';
-  window.activeUtterance.rate = 0.65; // 지정하신 0.65 속도
-  window.activeUtterance.volume = 1.0; // 볼륨 최대
+  window.activeUtterance.rate = 0.65;
+  window.activeUtterance.volume = 1.0;
 
-  // 시스템 내부 음성 매칭
   const voices = window.speechSynthesis.getVoices();
   if (voices && voices.length > 0) {
     const femaleVoice = voices.find(
@@ -882,14 +863,12 @@ window.playTTS = function (text) {
     }
   }
 
-  // 💡 안드로이드 브라우저 스레드가 안정화되도록 미세한 시간차(80ms)를 두고 맑게 재생합니다.
-  setTimeout(() => {
-    try {
-      window.speechSynthesis.speak(window.activeUtterance);
-    } catch (e) {
-      console.error('안드로이드 TTS 재생 실패:', e);
-    }
-  }, 80);
+  // 👇수정할 부분: setTimeout 80ms를 지우고 단 1ms의 딜레이도 없이 즉시 재생합니다!
+  try {
+    window.speechSynthesis.speak(window.activeUtterance);
+  } catch (e) {
+    console.error('안드로이드 TTS 재생 실패:', e);
+  }
 };
 
 // 4. 다시 듣기 버튼 (유저의 직접 터치이므로 안드로이드 락을 완벽히 뚫고 고정 속도로 재생됩니다)
