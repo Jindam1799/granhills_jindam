@@ -645,7 +645,17 @@ function selectChunk(chunk, cardElement) {
 
   display.appendChild(selectedTag);
 
+  // selectChunk 함수 내부 맨 아래쪽 영역
   if (selectedChunks.length === answerOrder.length) {
+    // 🔥 [안드로이드 전용 특약 처방] 유저가 카드를 터치한 순간 빈 소리로 브라우저 TTS 락을 해제합니다.
+    if ('speechSynthesis' in window) {
+      try {
+        const warmUp = new SpeechSynthesisUtterance('');
+        window.speechSynthesis.speak(warmUp);
+      } catch (e) {}
+    }
+
+    // 기존 정답 체크 딜레이 실행
     setTimeout(checkAnswer, 100);
   }
 }
@@ -829,21 +839,23 @@ window.togglePinyin = function () {
     pyBtn.innerText = '👀 병음 보기';
   }
 };
-
-// 3. 0.65배속 여자 목소리 재생
+// 3. 0.65배속으로 여자 목소리를 찾아 1번만 읽어주는 함수 (모바일 안정성 강화 버전)
 window.playTTS = function (text) {
   if (!('speechSynthesis' in window)) return;
 
-  // 에러 방어 처리
   try {
-    window.speechSynthesis.cancel();
+    // ★ 안드로이드 버그 방지: 무조건 cancel()을 때리지 않고, 스마트폰이 말하고 있을 때만 조심스럽게 끊어줍니다.
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
   } catch (e) {}
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'zh-CN';
-  utterance.rate = 0.65;
-  utterance.volume = 1.0;
+  utterance.rate = 0.65; // 0.65배속 고정
+  utterance.volume = 1.0; // 볼륨 최대
 
+  // 스마트폰 기기 내부의 음성 목록을 실시간으로 다시 가져옵니다 (비동기 로딩 완벽 대응)
   const voices = window.speechSynthesis.getVoices();
   const femaleVoice = voices.find(
     (v) =>
@@ -860,7 +872,14 @@ window.playTTS = function (text) {
     utterance.voice = defaultZhVoice;
   }
 
-  window.speechSynthesis.speak(utterance);
+  // ★ 안드로이드 크롬 전용 안전장치: 팝업창이 뜨는 타이밍과 꼬이지 않도록 미세한 딜레이 후 맑게 재생합니다.
+  setTimeout(() => {
+    try {
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      console.error('TTS 재생 실패:', e);
+    }
+  }, 50);
 };
 
 // 4. 다시 듣기
