@@ -1,6 +1,6 @@
 const allSentenceData = {
   /* ============================================================
-     [데이터 설정]
+     [데이터 설정] Day 9 ~ 11
      ============================================================ */
   day9: [
     {
@@ -188,7 +188,6 @@ const allSentenceData = {
       ko: '누가 한자를 쓸 줄 알아요?',
       chunks: [
         { h: '谁', p: 'shéi' },
-
         { h: '会', p: 'huì' },
         { h: '写', p: 'xiě' },
         { h: '汉字', p: 'Hànzì' },
@@ -287,34 +286,34 @@ const allSentenceData = {
       ko: '제 중국인 친구는 매운 것을 먹을 수 있다.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '의', p: 'de' },
+        { h: '的', p: 'de' },
         { h: '中国', p: 'zhōngguó' },
         { h: '朋友', p: 'péngyou' },
         { h: '能', p: 'néng' },
         { h: '吃', p: 'chī' },
         { h: '辣', p: 'là' },
-        { h: '의', p: 'de' },
+        { h: '的', p: 'de' },
       ],
     },
     {
       ko: '제 중국인 친구는 매운 것을 먹을 수 없다.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '의', p: 'de' },
+        { h: '的', p: 'de' },
         { h: '中国', p: 'zhōngguó' },
         { h: '朋友', p: 'péngyou' },
         { h: '不', p: 'bù' },
         { h: '能', p: 'néng' },
         { h: '吃', p: 'chī' },
         { h: '辣', p: 'là' },
-        { h: '의', p: 'de' },
+        { h: '的', p: 'de' },
       ],
     },
     {
       ko: '당신의 배우자는 문제를 해결할 것이다.',
       chunks: [
         { h: '您', p: 'nín' },
-        { h: '의', p: 'de' },
+        { h: '的', p: 'de' },
         { h: '爱人', p: 'àiren' },
         { h: '会', p: 'huì' },
         { h: '解决', p: 'jiějué' },
@@ -325,7 +324,7 @@ const allSentenceData = {
       ko: '당신의 배우자는 문제를 해결하지 못할 것이다.',
       chunks: [
         { h: '您', p: 'nín' },
-        { h: '의', p: 'de' },
+        { h: '的', p: 'de' },
         { h: '爱人', p: 'àiren' },
         { h: '不', p: 'bú' },
         { h: '会', p: 'huì' },
@@ -391,7 +390,7 @@ const allSentenceData = {
         { h: '今天', p: 'jīntiān' },
         { h: '不', p: 'bù' },
         { h: '能', p: 'néng' },
-        { h: '上課', p: 'shàngkè' },
+        { h: '上课', p: 'shàngkè' },
       ],
     },
     {
@@ -406,7 +405,7 @@ const allSentenceData = {
     {
       ko: '그들은 오늘 나갈 수 없어요.',
       chunks: [
-        { h: '**', p: 'tāmen' },
+        { h: '他们', p: 'tāmen' },
         { h: '今天', p: 'jīntiān' },
         { h: '不', p: 'bù' },
         { h: '能', p: 'néng' },
@@ -467,7 +466,7 @@ const allSentenceData = {
       ko: '제 배우자는 숙제를 끝낼 수 있어요.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '의', p: 'de' },
+        { h: '的', p: 'de' },
         { h: '爱人', p: 'àiren' },
         { h: '能', p: 'néng' },
         { h: '完成', p: 'wánchéng' },
@@ -478,7 +477,7 @@ const allSentenceData = {
       ko: '제 중국인 친구는 문제를 해결할 수 없어요.',
       chunks: [
         { h: '我', p: 'wǒ' },
-        { h: '의', p: 'de' },
+        { h: '的', p: 'de' },
         { h: '中国', p: 'Zhōngguó' },
         { h: '朋友', p: 'péngyou' },
         { h: '不', p: 'bù' },
@@ -513,12 +512,53 @@ window.onload = function () {
   if (titleTag) titleTag.innerText = `STEP 2 - Day ${selectedDay}`;
 };
 
+/* ============================================================
+   🔥 [안드로이드 마스터 키] 화면 첫 터치 시 모든 소리 잠금 강제 해제
+   ============================================================ */
+let isAudioUnlocked = false;
+window.addEventListener(
+  'touchstart',
+  function () {
+    if (isAudioUnlocked) return;
+
+    // 1. 효과음 락 해제
+    ['timer-sound', 'correct-sound', 'wrong-sound'].forEach((id) => {
+      const audio = document.getElementById(id);
+      if (audio) {
+        audio.muted = true;
+        audio
+          .play()
+          .then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.muted = false;
+          })
+          .catch(() => {});
+      }
+    });
+
+    // 2. TTS 락 해제
+    if ('speechSynthesis' in window) {
+      let msg = new SpeechSynthesisUtterance('');
+      window.speechSynthesis.speak(msg);
+    }
+    isAudioUnlocked = true;
+  },
+  { once: true },
+); // 딱 한 번만 실행됨
+
+/* ============================================================
+   [핵심 함수] 효과음 재생 (안드로이드 복제 차단 버그 해결)
+   ============================================================ */
 function playEffect(audioElement) {
   if (!audioElement) return;
-  const clone = audioElement.cloneNode(true);
-  clone.volume = 1;
-  clone.muted = false;
-  clone.play().catch(() => {});
+  try {
+    audioElement.pause();
+    audioElement.currentTime = 0;
+    audioElement.muted = false;
+    audioElement.volume = 1;
+    audioElement.play().catch((e) => console.log(e)); // 복제(cloneNode) 금지! 원본만 재생
+  } catch (e) {}
 }
 
 function startGame() {
@@ -590,9 +630,8 @@ function selectChunk(chunk, cardElement) {
   };
   display.appendChild(selectedTag);
 
-  // 💡 안드로이드 락 우회: 딜레이를 완벽히 없애 유저 터치 권한 유지
   if (selectedChunks.length === answerOrder.length) {
-    checkAnswer();
+    checkAnswer(); // 딜레이 없이 즉시 정답 체크
   }
 }
 
@@ -605,12 +644,7 @@ function checkAnswer() {
   const fb = document.getElementById('feedback-msg');
 
   if (isCorrect) {
-    // 💡 안드로이드 핵심: 오디오 파일(띠링~)과 TTS가 동시 재생되면 안드로이드가 TTS를 차단합니다.
-    // 안드로이드 환경에서는 효과음을 건너뛰고 오직 맑은 TTS 음성에 집중시킵니다.
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    if (!isAndroid) {
-      playEffect(correctSound);
-    }
+    playEffect(correctSound); // 복제 버그를 해결했으므로 띠링~ 소리가 정상적으로 납니다.
 
     const currentQuestion = gameQueue[currentIdx];
     const fullSentence = currentQuestion.chunks
@@ -621,7 +655,7 @@ function checkAnswer() {
     fb.innerText = '딩동댕! 잘하셨어요! 👏';
     fb.style.color = 'var(--correct)';
 
-    // 즉시 팝업창 실행 (0초 딜레이)
+    // 즉시 팝업창 띄우기
     showTTSPopup(fullSentence, fullPinyin);
   } else {
     playEffect(wrongSound);
@@ -654,6 +688,14 @@ function startTimer() {
     timerDisplay.innerText = timeLeft;
     timerDisplay.style.color = 'var(--primary)';
   }
+
+  if (timerSound) {
+    timerSound.pause();
+    timerSound.currentTime = 0;
+    timerSound.muted = false;
+    timerSound.play().catch(() => {});
+  }
+
   timerInterval = setInterval(() => {
     timeLeft--;
     const currentDisplay = document.getElementById('timer');
@@ -669,15 +711,21 @@ function startTimer() {
 }
 
 function handleTimeOut() {
+  if (timerSound) timerSound.pause();
   playEffect(wrongSound);
   document.getElementById('feedback-msg').innerText =
     '시간 초과! 다시 도전! ⏰';
   document.getElementById('feedback-msg').style.color = 'var(--wrong)';
-  resetCurrentSentence();
+  document.getElementById('sentence-display').classList.add('shake');
+  setTimeout(() => {
+    document.getElementById('sentence-display').classList.remove('shake');
+    resetCurrentSentence();
+  }, 1200);
 }
 
 function endGame() {
   clearInterval(timerInterval);
+  if (timerSound) timerSound.pause();
   document.getElementById('game-board').style.display = 'none';
   const result = document.getElementById('result-screen');
   if (result) result.style.display = 'flex';
@@ -686,10 +734,9 @@ function endGame() {
 }
 
 /* ============================================================
-   [TTS & 팝업 기능] 안드로이드 완벽 대응 극초고속 버전
+   [TTS & 팝업 기능] 안드로이드 최종 안정화 버전
    ============================================================ */
 let currentFullSentence = '';
-window.activeUtterance = null;
 
 if ('speechSynthesis' in window) {
   window.speechSynthesis.getVoices();
@@ -739,33 +786,36 @@ window.playTTS = function (text) {
     if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
   } catch (e) {}
 
-  window.activeUtterance = new SpeechSynthesisUtterance(text);
-  window.activeUtterance.lang = 'zh-CN';
-  window.activeUtterance.rate = 0.65;
-  window.activeUtterance.volume = 1.0;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'zh-CN';
+  utterance.rate = 0.65;
+  utterance.volume = 1.0;
 
-  // 💡 안드로이드 전용 처리: 모바일 크롬은 특정한 오프라인 음성을 강제 지정하면 재생이 차단됩니다.
-  // lang 기반으로 시스템 기본 여성 음성을 타게 만드는 것이 가장 안전합니다.
-  const isAndroid = /Android/i.test(navigator.userAgent);
-  if (!isAndroid) {
-    const voices = window.speechSynthesis.getVoices();
-    if (voices && voices.length > 0) {
-      const femaleVoice = voices.find(
-        (v) =>
-          v.lang.includes('zh-CN') &&
-          (v.name.includes('Xiaoxiao') ||
-            v.name.includes('Google') ||
-            v.name.includes('Female')),
-      );
-      if (femaleVoice) window.activeUtterance.voice = femaleVoice;
+  const voices = window.speechSynthesis.getVoices();
+  if (voices && voices.length > 0) {
+    const femaleVoice = voices.find(
+      (v) =>
+        v.lang.includes('zh-CN') &&
+        (v.name.includes('Xiaoxiao') ||
+          v.name.includes('Google') ||
+          v.name.includes('Female')),
+    );
+    const defaultZhVoice = voices.find((v) => v.lang.includes('zh-CN'));
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    } else if (defaultZhVoice) {
+      utterance.voice = defaultZhVoice;
     }
   }
 
-  try {
-    window.speechSynthesis.speak(window.activeUtterance);
-  } catch (e) {
-    console.error(e);
-  }
+  // 약간의 딜레이(100ms)를 주어 정답 사운드와 충돌하는 것을 방지합니다.
+  setTimeout(() => {
+    try {
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      console.error(e);
+    }
+  }, 100);
 };
 
 window.replayTTS = function () {
@@ -778,7 +828,6 @@ window.showTTSPopup = function (text, pinyin) {
   document.getElementById('tts-popup-cn').innerText = text;
   document.getElementById('tts-popup-py').innerText = pinyin;
 
-  // 💡 오타 수정 완료! (style.style -> style)
   document.getElementById('tts-popup-py').style.display = 'none';
   document.getElementById('py-toggle-btn').innerText = '👀 병음 보기';
 
@@ -787,7 +836,7 @@ window.showTTSPopup = function (text, pinyin) {
     popup.style.display = 'flex';
     popup.classList.add('active');
   }
-  window.playTTS(text); // 딜레이 0초 즉시 재생
+  window.playTTS(text);
 };
 
 window.closeTTSPopupAndNext = function () {
@@ -799,6 +848,7 @@ window.closeTTSPopupAndNext = function () {
     popup.classList.remove('active');
     popup.style.display = 'none';
   }
+
   score++;
   if (document.getElementById('score'))
     document.getElementById('score').innerText = score;
