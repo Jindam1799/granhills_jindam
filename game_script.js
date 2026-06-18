@@ -645,9 +645,9 @@ function selectChunk(chunk, cardElement) {
 
   display.appendChild(selectedTag);
 
-  // selectChunk 함수 내부 맨 아래쪽 영역
+  // selectChunk 함수 내부의 맨 아랫부분 코드입니다.
   if (selectedChunks.length === answerOrder.length) {
-    // 🔥 [안드로이드 전용 특약 처방] 유저가 카드를 터치한 순간 빈 소리로 브라우저 TTS 락을 해제합니다.
+    // 💡 안드로이드 오디오 통로 강제 개방: 유저 터치 순간 빈 소리를 먹여 락을 해제합니다.
     if ('speechSynthesis' in window) {
       try {
         const warmUp = new SpeechSynthesisUtterance('');
@@ -655,7 +655,7 @@ function selectChunk(chunk, cardElement) {
       } catch (e) {}
     }
 
-    // 기존 정답 체크 딜레이 실행
+    // 정답 체크 함수 호출 딜레이
     setTimeout(checkAnswer, 100);
   }
 }
@@ -791,24 +791,30 @@ function speakChinese(text) {
   }
 }
 /* ============================================================
-   [TTS & 팝업 기능] 안드로이드 터치/TTS 오류 완벽 방어 버전
+   [TTS & 팝업 기능] 안드로이드 모바일 버그 원천 차단 버전
    ============================================================ */
 let currentFullSentence = '';
 
-// 브라우저 목소리 목록 미리 불러오기
+// 💡 안드로이드 크롬 핵심 수정: 가비지 컬렉터(메모리 삭제) 방지용 전역 변수 설정
+window.activeUtterance = null;
+
+// 페이지가 로드될 때 안드로이드 TTS 엔진을 미리 깨워둡니다.
 if ('speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = () => {
-    window.speechSynthesis.getVoices();
-  };
+  window.speechSynthesis.getVoices();
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = function () {
+      window.speechSynthesis.getVoices();
+    };
+  }
 }
 
-// 1. 팝업창 생성 (display: none으로 초기 은폐)
+// 1. 팝업창 생성 (기존 구조 유지)
 function createTTSPopup() {
   if (document.getElementById('tts-popup')) return;
   const overlay = document.createElement('div');
   overlay.id = 'tts-popup';
   overlay.className = 'tts-popup-overlay';
-  overlay.style.display = 'none'; // ★ 안드로이드 유령 터치 방지
+  overlay.style.display = 'none';
   overlay.innerHTML = `
     <div class="tts-popup-box">
       <div class="apt-tag" style="margin-bottom:15px; display:inline-block;">정답 확인</div>
@@ -826,7 +832,7 @@ function createTTSPopup() {
   document.body.appendChild(overlay);
 }
 
-// 2. 병음 토글 함수 (전역 함수 보장)
+// 2. 병음 보기 토글
 window.togglePinyin = function () {
   const pyDiv = document.getElementById('tts-popup-py');
   const pyBtn = document.getElementById('py-toggle-btn');
@@ -839,50 +845,54 @@ window.togglePinyin = function () {
     pyBtn.innerText = '👀 병음 보기';
   }
 };
-// 3. 0.65배속으로 여자 목소리를 찾아 1번만 읽어주는 함수 (모바일 안정성 강화 버전)
+
+// 3. 💡 안드로이드 완벽 대응 재생 함수
 window.playTTS = function (text) {
   if (!('speechSynthesis' in window)) return;
 
   try {
-    // ★ 안드로이드 버그 방지: 무조건 cancel()을 때리지 않고, 스마트폰이 말하고 있을 때만 조심스럽게 끊어줍니다.
+    // 안드로이드 멈춤 방지: 실제로 소리가 나고 있을 때만 안전하게 cancel 실행
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
     }
   } catch (e) {}
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'zh-CN';
-  utterance.rate = 0.65; // 0.65배속 고정
-  utterance.volume = 1.0; // 볼륨 최대
+  // 💡 핵심: 로컬 변수 대신 window 전역 변수에 담아 스마트폰 메모리 삭제 버그 방지!
+  window.activeUtterance = new SpeechSynthesisUtterance(text);
+  window.activeUtterance.lang = 'zh-CN';
+  window.activeUtterance.rate = 0.65; // 지정하신 0.65 속도
+  window.activeUtterance.volume = 1.0; // 볼륨 최대
 
-  // 스마트폰 기기 내부의 음성 목록을 실시간으로 다시 가져옵니다 (비동기 로딩 완벽 대응)
+  // 시스템 내부 음성 매칭
   const voices = window.speechSynthesis.getVoices();
-  const femaleVoice = voices.find(
-    (v) =>
-      v.lang.includes('zh-CN') &&
-      (v.name.includes('Xiaoxiao') ||
-        v.name.includes('Google') ||
-        v.name.includes('Female')),
-  );
-  const defaultZhVoice = voices.find((v) => v.lang.includes('zh-CN'));
+  if (voices && voices.length > 0) {
+    const femaleVoice = voices.find(
+      (v) =>
+        v.lang.includes('zh-CN') &&
+        (v.name.includes('Xiaoxiao') ||
+          v.name.includes('Google') ||
+          v.name.includes('Female')),
+    );
+    const defaultZhVoice = voices.find((v) => v.lang.includes('zh-CN'));
 
-  if (femaleVoice) {
-    utterance.voice = femaleVoice;
-  } else if (defaultZhVoice) {
-    utterance.voice = defaultZhVoice;
+    if (femaleVoice) {
+      window.activeUtterance.voice = femaleVoice;
+    } else if (defaultZhVoice) {
+      window.activeUtterance.voice = defaultZhVoice;
+    }
   }
 
-  // ★ 안드로이드 크롬 전용 안전장치: 팝업창이 뜨는 타이밍과 꼬이지 않도록 미세한 딜레이 후 맑게 재생합니다.
+  // 💡 안드로이드 브라우저 스레드가 안정화되도록 미세한 시간차(80ms)를 두고 맑게 재생합니다.
   setTimeout(() => {
     try {
-      window.speechSynthesis.speak(utterance);
+      window.speechSynthesis.speak(window.activeUtterance);
     } catch (e) {
-      console.error('TTS 재생 실패:', e);
+      console.error('안드로이드 TTS 재생 실패:', e);
     }
-  }, 50);
+  }, 80);
 };
 
-// 4. 다시 듣기
+// 4. 다시 듣기 버튼 (유저의 직접 터치이므로 안드로이드 락을 완벽히 뚫고 고정 속도로 재생됩니다)
 window.replayTTS = function () {
   window.playTTS(currentFullSentence);
 };
@@ -894,36 +904,33 @@ window.showTTSPopup = function (text, pinyin) {
   document.getElementById('tts-popup-cn').innerText = text;
   document.getElementById('tts-popup-py').innerText = pinyin;
 
-  document.getElementById('tts-popup-py').style.display = 'none';
+  document.getElementById('tts-popup-py').style.style.display = 'none';
   document.getElementById('py-toggle-btn').innerText = '👀 병음 보기';
 
   const popup = document.getElementById('tts-popup');
-  popup.style.display = 'flex'; // ★ 화면에 실체화
+  if (popup) {
+    popup.style.display = 'flex';
+    setTimeout(() => {
+      popup.classList.add('active');
+    }, 10);
+  }
 
-  setTimeout(() => {
-    popup.classList.add('active'); // ★ 부드럽게 등장
-  }, 10);
-
-  setTimeout(() => {
-    window.playTTS(text);
-  }, 300);
+  // 정답 팝업 뜨면서 최초 자동 재생 시도
+  window.playTTS(text);
 };
 
-// 6. 다음 문제 넘어가기 (안드로이드 오류 완벽 차단)
+// 6. 다음 문제 넘어가기
 window.closeTTSPopupAndNext = function () {
-  // 안드로이드 TTS 강제 종료 시 에러 무시
   try {
-    if ('speechSynthesis' in window) {
+    if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
     }
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
 
   const popup = document.getElementById('tts-popup');
   if (popup) {
     popup.classList.remove('active');
-    popup.style.display = 'none'; // ★ 유령 터치 방지를 위해 즉시 완벽 제거
+    popup.style.display = 'none';
   }
 
   score++;
