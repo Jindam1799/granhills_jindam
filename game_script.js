@@ -781,7 +781,7 @@ function speakChinese(text) {
   }
 }
 /* ============================================================
-   [TTS & 팝업 기능] 병음 토글 및 0.65배속 1회 재생 (여성 음성)
+   [TTS & 팝업 기능] 안드로이드 터치/TTS 오류 완벽 방어 버전
    ============================================================ */
 let currentFullSentence = '';
 
@@ -792,18 +792,18 @@ if ('speechSynthesis' in window) {
   };
 }
 
-// 1. 팝업창 생성 (병음 보기 버튼 추가)
+// 1. 팝업창 생성 (display: none으로 초기 은폐)
 function createTTSPopup() {
   if (document.getElementById('tts-popup')) return;
   const overlay = document.createElement('div');
   overlay.id = 'tts-popup';
   overlay.className = 'tts-popup-overlay';
+  overlay.style.display = 'none'; // ★ 안드로이드 유령 터치 방지
   overlay.innerHTML = `
     <div class="tts-popup-box">
       <div class="apt-tag" style="margin-bottom:15px; display:inline-block;">정답 확인</div>
       <div id="tts-popup-cn" class="tts-popup-cn"></div>
       
-      <!-- 👇 병음 보기 버튼 👇 -->
       <button id="py-toggle-btn" class="py-toggle-btn" onclick="togglePinyin()">👀 병음 보기</button>
       <div id="tts-popup-py" class="tts-popup-py"></div>
       
@@ -816,24 +816,28 @@ function createTTSPopup() {
   document.body.appendChild(overlay);
 }
 
-// 2. 병음 보기/숨기기 전환 함수
-function togglePinyin() {
+// 2. 병음 토글 함수 (전역 함수 보장)
+window.togglePinyin = function () {
   const pyDiv = document.getElementById('tts-popup-py');
   const pyBtn = document.getElementById('py-toggle-btn');
 
   if (pyDiv.style.display === 'none' || pyDiv.style.display === '') {
-    pyDiv.style.display = 'block'; // 보이게 변경
+    pyDiv.style.display = 'block';
     pyBtn.innerText = '🙈 병음 숨기기';
   } else {
-    pyDiv.style.display = 'none'; // 다시 숨기기
+    pyDiv.style.display = 'none';
     pyBtn.innerText = '👀 병음 보기';
   }
-}
+};
 
-// 3. 0.65배속으로 여자 목소리를 찾아 1번만 읽어주는 함수
-function playTTS(text) {
+// 3. 0.65배속 여자 목소리 재생
+window.playTTS = function (text) {
   if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
+
+  // 에러 방어 처리
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {}
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'zh-CN';
@@ -857,38 +861,56 @@ function playTTS(text) {
   }
 
   window.speechSynthesis.speak(utterance);
-}
+};
 
-// 4. 다시 듣기 버튼
-function replayTTS() {
-  playTTS(currentFullSentence);
-}
+// 4. 다시 듣기
+window.replayTTS = function () {
+  window.playTTS(currentFullSentence);
+};
 
 // 5. 정답 맞췄을 때 팝업 띄우기
-function showTTSPopup(text, pinyin) {
+window.showTTSPopup = function (text, pinyin) {
   createTTSPopup();
   currentFullSentence = text;
   document.getElementById('tts-popup-cn').innerText = text;
   document.getElementById('tts-popup-py').innerText = pinyin;
 
-  // 💡 새 문제가 나올 때마다 병음을 다시 숨김 상태로 초기화합니다.
   document.getElementById('tts-popup-py').style.display = 'none';
   document.getElementById('py-toggle-btn').innerText = '👀 병음 보기';
 
-  document.getElementById('tts-popup').classList.add('active');
+  const popup = document.getElementById('tts-popup');
+  popup.style.display = 'flex'; // ★ 화면에 실체화
 
   setTimeout(() => {
-    playTTS(text);
-  }, 300);
-}
+    popup.classList.add('active'); // ★ 부드럽게 등장
+  }, 10);
 
-// 6. 다음 문제로 넘어가기
-function closeTTSPopupAndNext() {
-  window.speechSynthesis.cancel();
-  document.getElementById('tts-popup').classList.remove('active');
+  setTimeout(() => {
+    window.playTTS(text);
+  }, 300);
+};
+
+// 6. 다음 문제 넘어가기 (안드로이드 오류 완벽 차단)
+window.closeTTSPopupAndNext = function () {
+  // 안드로이드 TTS 강제 종료 시 에러 무시
+  try {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  } catch (e) {
+    console.log(e);
+  }
+
+  const popup = document.getElementById('tts-popup');
+  if (popup) {
+    popup.classList.remove('active');
+    popup.style.display = 'none'; // ★ 유령 터치 방지를 위해 즉시 완벽 제거
+  }
 
   score++;
-  document.getElementById('score').innerText = score;
+  const scoreEl = document.getElementById('score');
+  if (scoreEl) scoreEl.innerText = score;
+
   currentIdx++;
   loadQuestion();
-}
+};
