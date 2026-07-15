@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>진담중국어 - 덩어리게임</title>
+
+    <script>
+      var userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.indexOf('kakaotalk') > -1) {
+        // 카카오톡에서 열렸다면, 외부 브라우저(크롬/사파리)로 현재 주소를 다시 엽니다.
+        location.href =
+          'kakaotalk://web/openExternal?url=' +
+          encodeURIComponent(location.href);
+      }
+    </script>
+
     <link rel="stylesheet" href="style.css" />
     <style>
       /* [프리미엄 오렌지 테마 보강 스타일] */
