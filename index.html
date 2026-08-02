@@ -43,6 +43,7 @@
         영상을 재생할 수 없습니다.
       </video>
     </div>
+
     <div class="lobby-container">
       <div class="lobby-header">
         <span class="apt-tag">JINDAM CHINESE</span>
@@ -55,14 +56,16 @@
         <button class="level-btn" onclick="toggleLevel('level1-content')">
           🌟 Level 1 시작하기
         </button>
-
-        <!-- 🚀 Level 2 버튼 잠금 해제 및 토글 함수 연결 -->
         <button class="level-btn" onclick="toggleLevel('level2-content')">
           🚀 Level 2 시작하기
         </button>
+        <!-- 👇 새로 추가된 Level 3 버튼 👇 -->
+        <button class="level-btn" onclick="toggleLevel('level3-content')">
+          🔥 Level 3 시작하기
+        </button>
       </div>
 
-      <!-- 🌟 Level 1 클릭 시 나타날 상세 영역 (초기 상태: display:none) -->
+      <!-- 🌟 Level 1 클릭 시 나타날 상세 영역 -->
       <div id="level1-content" class="level-content" style="display: none">
         <div class="level-section">
           <h2>🌟 진담중국어 Level 1 🌟</h2>
@@ -118,7 +121,7 @@
       </div>
       <!-- Level 1 끝 -->
 
-      <!-- 🌟 Level 2가 lobby-container 안쪽으로 들어왔습니다! -->
+      <!-- 🌟 Level 2 상세 영역 -->
       <div id="level2-content" class="level-content" style="display: none">
         <div class="level-section">
           <h2>🚀 진담중국어 Level 2 (실전 문장) 🚀</h2>
@@ -126,7 +129,6 @@
           <div class="game-type-box">
             <h3>🗣️ 실전 문장 덩어리 게임</h3>
             <div class="button-grid">
-              <!-- 👇 이렇게 하나로 통일하고 물음표(?) 뒤에 숫자만 바꿔주세요 👇 -->
               <button onclick="location.href = 'game.html?day=9'">
                 덩어리 1
               </button>
@@ -139,7 +141,6 @@
               <button onclick="location.href = 'game.html?day=12'">
                 덩어리 4
               </button>
-
               <button onclick="location.href = 'game.html?day=13'">
                 덩어리 5
               </button>
@@ -149,7 +150,6 @@
               <button onclick="location.href = 'game.html?day=15'">
                 덩어리 7
               </button>
-              <!-- 기존 덩어리 7 버튼 아래에 추가 -->
               <button onclick="location.href = 'game.html?day=16'">
                 덩어리 8
               </button>
@@ -157,13 +157,55 @@
           </div>
         </div>
       </div>
+      <!-- Level 2 끝 -->
+
+      <!-- 🌟 Level 3 상세 영역 -->
+      <div id="level3-content" class="level-content" style="display: none">
+        <div class="level-section">
+          <h2>🔥 진담중국어 Level 3 (도전 문장) 🔥</h2>
+
+          <div class="game-type-box">
+            <h3>🗣️ 실전 문장 덩어리 게임</h3>
+            <div class="button-grid">
+              <button onclick="location.href = 'game.html?day=17'">
+                덩어리 1
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Level 3 끝 -->
     </div>
-    <!-- 🌟 여기가 lobby-container의 진짜 끝입니다 -->
+
+    <!-- 👇 화면 열고 닫는 스크립트 (이 부분이 없어서 안 열렸던 것입니다!) 👇 -->
+    <script>
+      function toggleLevel(targetId) {
+        // 1. 모든 레벨 콘텐츠를 찾아서 일단 숨깁니다.
+        const allContents = document.querySelectorAll('.level-content');
+        allContents.forEach((content) => {
+          if (content.id !== targetId) {
+            content.style.display = 'none';
+          }
+        });
+
+        // 2. 클릭한 버튼의 콘텐츠를 찾아서 껐다 켰다 합니다.
+        const targetContent = document.getElementById(targetId);
+        if (targetContent) {
+          if (
+            targetContent.style.display === 'none' ||
+            targetContent.style.display === ''
+          ) {
+            targetContent.style.display = 'block';
+          } else {
+            targetContent.style.display = 'none';
+          }
+        }
+      }
+    </script>
 
     <script src="index_script.js"></script>
 
     <audio id="intro-bgm" src="intro_music.mp3" loop></audio>
-    <!-- 변경 후 (이렇게 덮어써주세요!) -->
     <audio id="timer-sound" src="timer_tick.mp3" loop preload="none"></audio>
     <audio id="correct-sound" src="correct.mp3" preload="none"></audio>
     <audio id="wrong-sound" src="wrong.mp3" preload="none"></audio>
